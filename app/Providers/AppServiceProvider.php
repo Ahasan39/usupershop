@@ -13,10 +13,14 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-      public function register(): void
+    public function register(): void
     {
         $this->app->singleton(CourierService::class, function ($app) {
             return new CourierService();
+        });
+
+        $this->app->bind('path.public', function() {
+            return base_path();
         });
     }
 
