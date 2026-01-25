@@ -44,7 +44,7 @@ class LoginController extends Controller
          
             if (Auth::attempt(credentials: ['email' => $content, 'password' => $password]) || Auth::attempt(['mobile' => $content, 'password' => $password])) {
                 if ($validData->usertype === 'customer') {
-                    return redirect()->route('cart.customer.dashboard')->with('success', 'Login Successfull.');
+                    return redirect()->route('dashboard')->with('success', 'Login Successfull.');
                 } elseif ($validData->usertype === 'vendor') {
                     return redirect()->route('seller.dashboard')->with('success', 'Login Successfull.');
                 } elseif ($validData->usertype === 'seller') {
