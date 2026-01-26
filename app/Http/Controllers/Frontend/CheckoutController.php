@@ -191,6 +191,13 @@ class CheckoutController extends Controller
             'address' => 'required',
         ]);
 
+        Log::info('Checkout Store Request', [
+            'user_id' => Auth::id(),
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+            'delivery_charge' => $request->delivery_charge
+        ]);
+
         $checkout = new Shipping();
         $checkout->user_id = Auth::user()->id;
         $checkout->name = $request->name;
@@ -198,8 +205,17 @@ class CheckoutController extends Controller
         $checkout->mobile = $request->mobile;
         $checkout->address = $request->address;
         $checkout->save();
+        
         Session::put('shipping_id', $checkout->id);
-        Session::put('delivery_charge', $request->delivery_charge);
+        // Set default delivery charge if not provided
+        $deliveryCharge = $request->delivery_charge ?? 60; // Default 60 BDT
+        Session::put('delivery_charge', $deliveryCharge);
+        
+        Log::info('Shipping created', [
+            'shipping_id' => $checkout->id,
+            'delivery_charge' => $deliveryCharge
+        ]);
+        
         return redirect()->route('customer.payment')->with('success', 'Shipping inserted successfully !!!');
     }
 

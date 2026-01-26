@@ -101,119 +101,161 @@ class DashboardController extends Controller
 
     public function paymentStore(Request $request)
     {
+        // Log incoming request for debugging
+        Log::info('Payment Store Request', [
+            'product_id' => $request->product_id,
+            'payment_method' => $request->payment_method,
+            'order_total' => $request->order_total,
+            'user_id' => Auth::id(),
+            'cart_count' => Cart::count()
+        ]);
+
         if (is_null($request->product_id)) {
-            return redirect()->back()->with('message', 'Please add any product for payment!');
+            Log::warning('No product_id in payment request');
+            return redirect()->back()->with('error', 'Please add any product for payment!');
         }
 
         $request->validate([
             'payment_method' => 'required',
         ]);
 
+        $orderID = null;
+
         try {
             $deliverycharge = Session::get('delivery_charge', 0);
             $del = intval($deliverycharge);
+
+            // Check if cart is empty
+            if (Cart::count() == 0) {
+                Log::warning('Cart is empty during payment');
+                return redirect()->route('product.list')->with('error', 'Your cart is empty!');
+            }
 
             // Validate stock before starting transaction
             foreach (Cart::content() as $content) {
                 $product = Product::find($content->id);
                 if (!$product || $product->quantity < $content->qty) {
+                    Log::warning('Product out of stock', ['product_id' => $content->id, 'required' => $content->qty, 'available' => $product->quantity ?? 0]);
                     return redirect()
                         ->route('product.list')
-                        ->with('error', "Product '{$product->name}' is out of stock or has insufficient quantity.");
+                        ->with('error', "Product '{$content->name}' is out of stock or has insufficient quantity.");
                 }
             }
 
-            DB::transaction(function () use ($request, &$orderID, &$orderPaymentStatus, $del) {
-                // Create Payment
-                $payment = new Payment();
-                $payment->payment_method = $request->payment_method;
-                $payment->save();
+            DB::beginTransaction();
 
-                // Create Order
-                $order = Order::updateOrCreate(
-                    [
-                        'user_id' => Auth::id(),
-                        'shipping_id' => Session::get('shipping_id'),
-                        'payment_id' => $payment->id,
-                        'invoice_no' => $payment->id,
-                    ],
-                    [
-                        'delivery_charge' => $del,
-                        'order_no' => $this->generateOrderNumber(),
-                        'coupon_discount' => Session::get('coupon_discount', 0),
-                        'order_total' => $request->order_total,
-                        'grand_total' => $request->grand_total,
-                        'status' => 'pending',
-                    ],
-                );
+            // Create Payment
+            $payment = new Payment();
+            $payment->payment_method = $request->payment_method;
+            $payment->save();
 
-                $orderID = $order->id;
-                $invoice = $order->id . '_' . Carbon::now()->format('YmdHis');
-                $order->update(['invoice_no' => $invoice]);
-                $orderPaymentStatus = $order->order_payment;
+            Log::info('Payment created', ['payment_id' => $payment->id]);
 
-                // Create Order Details
-                foreach (Cart::content() as $content) {
-                    $product = Product::find($content->id);
+            // Create Order
+            $order = new Order();
+            $order->user_id = Auth::id();
+            $order->shipping_id = Session::get('shipping_id');
+            $order->payment_id = $payment->id;
+            $order->delivery_charge = $del;
+            $order->order_no = $this->generateOrderNumber();
+            $order->coupon_discount = Session::get('coupon_discount', 0);
+            $order->order_total = $request->order_total;
+            $order->grand_total = $request->order_total + $del - Session::get('coupon_discount', 0);
+            $order->status = 'pending';
+            $order->area_id = $this->getAreaID();
+            $order->save();
 
-                    if ($product && $product->quantity >= $content->qty) {
-                        
-                        // Vendor commission logic
-                        $user = User::find($product->user_id);
-                        if ($user && $user->usertype == 'vendor' && $user->payment_status == 2) {
-                            $orderAmt = $request->order_total - $del;
-                            $sellerCommission = $orderAmt * 0.2;
-                            $vendorAmt = $orderAmt - $sellerCommission;
-                            $user->balance = ($user->balance ?? 0) + $vendorAmt;
-                            $user->save();
-                        }
+            $orderID = $order->id;
+            $invoice = $order->id . '_' . Carbon::now()->format('YmdHis');
+            $order->update(['invoice_no' => $invoice]);
 
-                        // Update stock
-                        $product->quantity -= $content->qty;
-                        $product->save();
+            Log::info('Order created', ['order_id' => $orderID, 'order_no' => $order->order_no]);
 
-                        // Save order detail
-                        OrderDetail::create([
-                            'order_id' => $orderID,
-                            'product_id' => $content->id,
-                            'color_id' => $content->options->color_id ?? null,
-                            'color_name' => $content->options->color_name ?? null,
-                            'size_id' => $content->options->size_id ?? null,
-                            'size_name' => $content->options->size_name ?? null,
-                            'quantity' => $content->qty,
-                        ]);
+            // Create Order Details
+            foreach (Cart::content() as $content) {
+                $product = Product::find($content->id);
+
+                if ($product && $product->quantity >= $content->qty) {
+                    
+                    // Vendor commission logic
+                    $productOwner = User::find($product->user_id);
+                    if ($productOwner && $productOwner->usertype == 'vendor' && $productOwner->payment_status == 2) {
+                        $orderAmt = $request->order_total - $del;
+                        $sellerCommission = $orderAmt * 0.2;
+                        $vendorAmt = $orderAmt - $sellerCommission;
+                        $productOwner->balance = ($productOwner->balance ?? 0) + $vendorAmt;
+                        $productOwner->save();
                     }
+
+                    // Update stock
+                    $product->quantity -= $content->qty;
+                    $product->save();
+
+                    // Save order detail
+                    $orderDetail = OrderDetail::create([
+                        'order_id' => $orderID,
+                        'product_id' => $content->id,
+                        'color_id' => $content->options->color_id ?? 0,
+                        'color_name' => $content->options->color_name ?? 'N/A',
+                        'size_id' => $content->options->size_id ?? 0,
+                        'size_name' => $content->options->size_name ?? 'N/A',
+                        'quantity' => $content->qty,
+                        'buy_price' => $product->trade_price ?? 0,
+                        'sell_price' => $content->price,
+                        'vendor_id' => $product->user_id ?? null,
+                    ]);
+
+                    Log::info('Order detail created', ['order_detail_id' => $orderDetail->id, 'product_id' => $content->id]);
                 }
-            });
+            }
 
             DB::commit();
+
+            Log::info('Order transaction committed successfully', ['order_id' => $orderID]);
+
             $coupon = Session::get('coupon_discount', 0);
 
             // Handle Payment
             $amount = $request->order_total + $del - $coupon;
+            
             if ($request->payment_method == 'Bkash') {
                 $payment_url = $this->processBkashPayment($amount, $orderID);
+                $this->clearCartAndSession();
+                
+                if (isset($payment_url['status']) && $payment_url['status'] === true) {
+                    return redirect($payment_url['url']);
+                } else {
+                    return redirect()->route('product.list')->with('error', $payment_url['message'] ?? 'Payment gateway error!');
+                }
             } elseif ($request->payment_method == 'EPS') {
                 $payment_url = $this->processEPSpaymenyGateway($amount, $orderID);
+                $this->clearCartAndSession();
+                
+                if (isset($payment_url['status']) && $payment_url['status'] === true) {
+                    return redirect($payment_url['url']);
+                } else {
+                    return redirect()->route('product.list')->with('error', $payment_url['message'] ?? 'Payment gateway error!');
+                }
             } elseif ($request->payment_method == 'Cash on Delivery') {
-                $payment_url = $this->processBkashPayment($del, $orderID);
+                // For COD, redirect to success page directly
+                $this->clearCartAndSession();
+                Log::info('COD order completed', ['order_id' => $orderID]);
+                return redirect()->route('success.page')->with('success', 'Order placed successfully! Order ID: ' . $orderID);
             } else {
+                DB::rollBack();
+                Log::error('Invalid payment method', ['method' => $request->payment_method]);
                 return redirect()->back()->with('error', 'Invalid payment method selected!');
             }
 
-            $this->clearCartAndSession();
-
-            if ($payment_url['status'] === true) {
-                return redirect($payment_url['url']);
-            } else {
-                return redirect()
-                    ->route('product.list')
-                    ->with('error', $payment_url['message'] ?? 'Something went wrong!');
-            }
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Order Processing Failed: ' . $e->getMessage());
-            return redirect()->route('shop.page')->with('error', 'Something went wrong during order processing. Please try again.');
+            Log::error('Order Processing Failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'request' => $request->all()
+            ]);
+            return redirect()->route('product.list')->with('error', 'Something went wrong during order processing: ' . $e->getMessage());
         }
     }
 
