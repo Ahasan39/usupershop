@@ -994,6 +994,26 @@
             const discount = {{ $productDetails->discount ?? 0 }};
             const discountType = {{ $productDetails->discount_type ?? 0 }};
 
+            /* ==============================
+                PROFIT CALCULATION (DEFINED FIRST)
+            ============================== */
+            window.showProfit = function() {
+                let selling = parseFloat($('#selling_price').val()) || 0;
+                let cost = parseFloat($('#product-dropshipper-price').val()) || 0;
+                let qty = parseInt($('#qty').val()) || 1;
+
+                let profit = (selling * qty) - (cost * qty);
+
+                console.log('showProfit called:', {selling, cost, qty, profit});
+                console.log('Element exists:', $('#profit_display_main').length);
+
+                // Update profit display (use the correct element ID)
+                $('#profit_display_main').text('৳' + profit.toFixed(2));
+                
+                // Update base price display
+                $('#base_price_display').text(cost.toFixed(2));
+            };
+
             function updatePrice() {
 
                 let colorId = $('.color-checkbox:checked').data('color-id') || null;
@@ -1034,20 +1054,7 @@
 
             updatePrice();
 
-            /* ==============================
-                PROFIT CALCULATION
-            ============================== */
-            window.showProfit = function() {
-                let selling = parseFloat($('#selling_price').val()) || 0;
-                let cost = parseFloat($('#product-dropshipper-price').val()) || 0;
-                let qty = parseInt($('#qty').val()) || 1;
 
-                let profit = (selling * qty) - (cost * qty);
-
-                $('#profit_display').text(
-                    profit >= 0 ? 'Profit: ৳' + profit.toFixed(2) : ''
-                );
-            };
 
             /* ==============================
                 COPY DESCRIPTION
