@@ -364,4 +364,67 @@ class Order extends Model
         return $this->hasOne(DropshipperProfit::class, 'order_id');
     }
 
+    /**
+     * Get dropshipper orders by status
+     */
+    static function getDropshipperOrderList($start, $length, $columns, $status)
+    {
+        $Q = self::queryBuild2($columns);
+
+        if ($Q == null) {
+            return self::limit($length)->offset($start)
+                ->where('dropshipper_id', auth()->id())
+                ->where('status', $status)
+                ->get();
+        } else {
+            if ($length != -1)
+                $Q->limit($length)->offset($start);
+            return $Q->where('dropshipper_id', auth()->id())
+                ->where('status', $status)
+                ->get();
+        }
+    }
+
+    /**
+     * Get dropshipper cancelled orders
+     */
+    static function getDropshipperCancelResult($start, $length, $columns)
+    {
+        $Q = self::queryBuild2($columns);
+
+        if ($Q == null) {
+            return self::limit($length)->offset($start)
+                ->where('dropshipper_id', auth()->id())
+                ->where('status', 'cancel')
+                ->get();
+        } else {
+            if ($length != -1)
+                $Q->limit($length)->offset($start);
+            return $Q->where('dropshipper_id', auth()->id())
+                ->where('status', 'cancel')
+                ->get();
+        }
+    }
+
+    /**
+     * Get dropshipper returned orders
+     */
+    static function getDropshipperReturnResult($start, $length, $columns)
+    {
+        $Q = self::queryBuild2($columns);
+
+        if ($Q == null) {
+            return self::limit($length)->offset($start)
+                ->where('dropshipper_id', auth()->id())
+                ->where('status', 'return')
+                ->get();
+        } else {
+            if ($length != -1)
+                $Q->limit($length)->offset($start);
+            return $Q->where('dropshipper_id', auth()->id())
+                ->where('status', 'return')
+                ->get();
+        }
+    }
+
 }

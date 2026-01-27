@@ -117,6 +117,41 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('dropshipper.orders.confirmed.list') }}"
+                        class="nav-link {{ $routeName === 'dropshipper.orders.confirmed.list' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Confirmed Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('dropshipper.orders.packaging.list') }}"
+                        class="nav-link {{ $routeName === 'dropshipper.orders.packaging.list' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>packaging Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('dropshipper.orders.shipment.list') }}"
+                        class="nav-link {{ $routeName === 'dropshipper.orders.shipment.list' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>shipment Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('dropshipper.orders.cancel.list') }}"
+                        class="nav-link {{ $routeName === 'dropshipper.orders.cancel.list' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Cancel Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('dropshipper.orders.return.list') }}"
+                        class="nav-link {{ $routeName === 'dropshipper.orders.return.list' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Return Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('dropshipper.orders.delivered.list') }}"
                         class="nav-link {{ $routeName === 'dropshipper.orders.delivered.list' ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>

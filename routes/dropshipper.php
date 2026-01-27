@@ -130,6 +130,16 @@ Route::group(['middleware' => ['auth', 'dropshipper']], function () {
     Route::prefix('dropshipper-orders')->group(function () {
         Route::get('/pending/list', [DropshipperOrderController::class, 'dropshipperPendingList'])
             ->name('dropshipper.orders.pending.list');
+        Route::get('/confirmed/list', [DropshipperOrderController::class, 'dropshipperConfirmedList'])
+            ->name('dropshipper.orders.confirmed.list');
+        Route::get('/packaging/list', [DropshipperOrderController::class, 'dropshipperPackagingList'])
+            ->name('dropshipper.orders.packaging.list');
+        Route::get('/shipment/list', [DropshipperOrderController::class, 'dropshipperShipmentList'])
+            ->name('dropshipper.orders.shipment.list');
+        Route::get('/cancel/list', [DropshipperOrderController::class, 'dropshipperCancelList'])
+            ->name('dropshipper.orders.cancel.list');
+        Route::get('/return/list', [DropshipperOrderController::class, 'dropshipperReturnList'])
+            ->name('dropshipper.orders.return.list');
         Route::get('/pending/print/{id}', [DropshipperOrderController::class, 'pendingPrintOrder'])
             ->name('dropshipper.orders.print');
         Route::get('/delivered/list', [DropshipperOrderController::class, 'dropshipperDeliveredList'])

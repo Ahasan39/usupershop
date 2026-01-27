@@ -43,6 +43,21 @@
         .notifyjs-corner {
             z-index: 10000 !important;
         }
+
+        /* Add this to your CSS */
+        .bottom-nav .nav-link {
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+
+        .bottom-nav .nav-link.active {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .bottom-nav .nav-link.active i {
+            transform: scale(1.15);
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -281,8 +296,60 @@
                 });
             </script>
         @endif
+        <!-- Mobile-only Bottom Tab Menu - Horizontal Side-by-Side with 5 Tabs -->
+        <nav class="navbar fixed-bottom navbar-light bg-white border-top shadow-sm"
+            style="height: 64px; z-index: 1030;"> <!-- slightly taller for better touch target -->
+            <div class="container-fluid px-0">
+                <ul class="nav nav-pills w-100 d-flex justify-content-around align-items-center" role="tablist">
+                    <!-- Shop -->
+                    <li class="nav-item text-center flex-grow-1">
+                        <a class="nav-link py-2 px-1 d-flex flex-column align-items-center {{ request()->routeIs('dropshipper.shopkeeper_product') ? 'active' : '' }}"
+                            href="{{ route('dropshipper.shopkeeper_product') }}">
+                            <i class="fas fa-home mb-1"></i>
+                            <small class="font-weight-medium">Shop</small>
+                        </a>
+                    </li>
+
+                    <!-- Order Track -->
+                    <li class="nav-item text-center flex-grow-1">
+                        <a class="nav-link py-2 px-1 d-flex flex-column align-items-center {{ request()->routeIs('dropshipper.orders.pending.list') ? 'active' : '' }}"
+                            href="{{ route('dropshipper.orders.pending.list') }}">
+                            <i class="fas fa-shopping-cart  mb-1"></i>
+                            <small class="font-weight-medium">Orders</small>
+                        </a>
+                    </li>
+
+                    <!-- Home (Dashboard) - often center position is prominent -->
+                    <li class="nav-item text-center flex-grow-1">
+                        <a class="nav-link py-2 px-1 d-flex flex-column align-items-center {{ request()->routeIs('dropshipper.dashboard') ? 'active' : '' }}"
+                            href="{{ route('frontend.home') }}">
+                            <i class="fas fa-box mb-1"></i> <!-- bigger icon in center -->
+                            <small class="font-weight-medium">Home</small>
+                        </a>
+                    </li>
+
+                    <!-- My Cart -->
+                    <li class="nav-item text-center flex-grow-1">
+                        <a class="nav-link py-2 px-1 d-flex flex-column align-items-center {{ request()->routeIs('show.cart') ? 'active' : '' }}"
+                            href="{{ route('show.cart') }}">
+                            <i class="fas fa-shopping-bag  mb-1"></i>
+                            <small class="font-weight-medium">Cart</small>
+                        </a>
+                    </li>
+
+                    <!-- Me -->
+                    <li class="nav-item text-center flex-grow-1">
+                        <a class="nav-link py-2 px-1 d-flex flex-column align-items-center {{ request()->routeIs('dropshipper.view.profile') ? 'active' : '' }}"
+                            href="{{ route('dropshipper.dashboard') }}">
+                            <i class="fas fa-user  mb-1"></i>
+                            <small class="font-weight-medium">Me</small>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
         <footer class="main-footer">
-            <strong>Copyright &copy; 
+            <strong>Copyright &copy;
                 <a href="{{ route('frontend.home') }}">U Super Shop</a>.</strong>
             <div class="float-right d-none d-sm-inline-block">
                 <b>Design & Developed By</b>

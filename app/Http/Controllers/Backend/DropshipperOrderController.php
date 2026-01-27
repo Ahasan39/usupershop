@@ -95,6 +95,296 @@ class DropshipperOrderController extends Controller
 
         return response()->json($res);
     }
+    public function dropshipperConfirmedList(Request $request)
+    {
+        if (!$request->ajax()) {
+            return view('backend.dropshipper.order.confirmed-list');
+        }
+
+        $draw = $request->input("draw");
+        $length = $request->input("length");
+        $start = $request->input("start");
+        $columns = $request->input('columns');
+
+        $Data = [];
+        $Result = Order::getDropshipperOrderList($start, $length, $columns,'confirmed'); // You’ll define this query in your Order model
+
+        $sn = $start + 1;
+        foreach ($Result as $Res) {
+
+            $DetailsRoute = route('dropshipper.orders.pending.details', $Res->id);
+
+            $action = "<a title='Details' class='btn btn-sm btn-info' href='$DetailsRoute'><i class='fas fa-eye'></i> Details</a>";
+
+            $order_no = 'ODR-#' . ($Res->order_no);
+            $order_total = ($Res->order_total);
+            $order_date = date('d-m-Y', strtotime($Res->created_at));
+
+            $payment = ($Res->payment['payment_method'] == 'Bkash')
+                ? 'Bkash [' . ($Res->payment['transaction_no']) . ']'
+                : $Res->payment['payment_method'];
+
+            $status = ($Res->status == 'pending')
+                ? '<span style="background:#DD4F42;color:#fff;padding:2px 8px;border-radius:3px;">Pending</span>'
+                : '<span style="background:#1BA160;color:#fff;padding:2px 8px;border-radius:3px;">No Status</span>';
+
+            $commission = $Res->commission ? $Res->commission . '%' : '0%';
+
+            $Data[] = [
+                'sn' => $sn,
+                'order_no' => $order_no,
+                'order_total' => $order_total,
+                'payment_id' => $payment,
+                'commission' => $commission,
+                'order_date' => $order_date,
+                'status' => $status,
+                'action' => $action,
+            ];
+
+            $sn++;
+        }
+
+        $res = [
+            "draw" => $draw,
+            "iTotalRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "iTotalDisplayRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "aaData" => $Data,
+        ];
+
+        return response()->json($res);
+    }
+    public function dropshipperPackagingList(Request $request)
+    {
+        if (!$request->ajax()) {
+            return view('backend.dropshipper.order.packaging-list');
+        }
+
+        $draw = $request->input("draw");
+        $length = $request->input("length");
+        $start = $request->input("start");
+        $columns = $request->input('columns');
+
+        $Data = [];
+        $Result = Order::getDropshipperOrderList($start, $length, $columns,'packaging'); // You’ll define this query in your Order model
+
+        $sn = $start + 1;
+        foreach ($Result as $Res) {
+
+            $DetailsRoute = route('dropshipper.orders.pending.details', $Res->id);
+
+            $action = "<a title='Details' class='btn btn-sm btn-info' href='$DetailsRoute'><i class='fas fa-eye'></i> Details</a>";
+
+            $order_no = 'ODR-#' . ($Res->order_no);
+            $order_total = ($Res->order_total);
+            $order_date = date('d-m-Y', strtotime($Res->created_at));
+
+            $payment = ($Res->payment['payment_method'] == 'Bkash')
+                ? 'Bkash [' . ($Res->payment['transaction_no']) . ']'
+                : $Res->payment['payment_method'];
+
+            $status = ($Res->status == 'pending')
+                ? '<span style="background:#DD4F42;color:#fff;padding:2px 8px;border-radius:3px;">Pending</span>'
+                : '<span style="background:#1BA160;color:#fff;padding:2px 8px;border-radius:3px;">No Status</span>';
+
+            $commission = $Res->commission ? $Res->commission . '%' : '0%';
+
+            $Data[] = [
+                'sn' => $sn,
+                'order_no' => $order_no,
+                'order_total' => $order_total,
+                'payment_id' => $payment,
+                'commission' => $commission,
+                'order_date' => $order_date,
+                'status' => $status,
+                'action' => $action,
+            ];
+
+            $sn++;
+        }
+
+        $res = [
+            "draw" => $draw,
+            "iTotalRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "iTotalDisplayRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "aaData" => $Data,
+        ];
+
+        return response()->json($res);
+    }
+    public function dropshipperShipmentList(Request $request)
+    {
+        if (!$request->ajax()) {
+            return view('backend.dropshipper.order.shipment-list');
+        }
+
+        $draw = $request->input("draw");
+        $length = $request->input("length");
+        $start = $request->input("start");
+        $columns = $request->input('columns');
+
+        $Data = [];
+        $Result = Order::getDropshipperOrderList($start, $length, $columns,'shipment'); // You’ll define this query in your Order model
+
+        $sn = $start + 1;
+        foreach ($Result as $Res) {
+
+            $DetailsRoute = route('dropshipper.orders.pending.details', $Res->id);
+
+            $action = "<a title='Details' class='btn btn-sm btn-info' href='$DetailsRoute'><i class='fas fa-eye'></i> Details</a>";
+
+            $order_no = 'ODR-#' . ($Res->order_no);
+            $order_total = ($Res->order_total);
+            $order_date = date('d-m-Y', strtotime($Res->created_at));
+
+            $payment = ($Res->payment['payment_method'] == 'Bkash')
+                ? 'Bkash [' . ($Res->payment['transaction_no']) . ']'
+                : $Res->payment['payment_method'];
+
+            $status = ($Res->status == 'pending')
+                ? '<span style="background:#DD4F42;color:#fff;padding:2px 8px;border-radius:3px;">Pending</span>'
+                : '<span style="background:#1BA160;color:#fff;padding:2px 8px;border-radius:3px;">No Status</span>';
+
+            $commission = $Res->commission ? $Res->commission . '%' : '0%';
+
+            $Data[] = [
+                'sn' => $sn,
+                'order_no' => $order_no,
+                'order_total' => $order_total,
+                'payment_id' => $payment,
+                'commission' => $commission,
+                'order_date' => $order_date,
+                'status' => $status,
+                'action' => $action,
+            ];
+
+            $sn++;
+        }
+
+        $res = [
+            "draw" => $draw,
+            "iTotalRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "iTotalDisplayRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "aaData" => $Data,
+        ];
+
+        return response()->json($res);
+    }
+    public function dropshipperCancelList(Request $request)
+    {
+        if (!$request->ajax()) {
+            return view('backend.dropshipper.order.cancel-list');
+        }
+
+        $draw = $request->input("draw");
+        $length = $request->input("length");
+        $start = $request->input("start");
+        $columns = $request->input('columns');
+
+        $Data = [];
+        $Result = Order::getDropshipperCancelResult($start, $length, $columns); // You’ll define this query in your Order model
+
+        $sn = $start + 1;
+        foreach ($Result as $Res) {
+
+            $DetailsRoute = route('dropshipper.orders.pending.details', $Res->id);
+
+            $action = "<a title='Details' class='btn btn-sm btn-info' href='$DetailsRoute'><i class='fas fa-eye'></i> Details</a>";
+
+            $order_no = 'ODR-#' . ($Res->order_no);
+            $order_total = ($Res->order_total);
+            $order_date = date('d-m-Y', strtotime($Res->created_at));
+
+            $payment = ($Res->payment['payment_method'] == 'Bkash')
+                ? 'Bkash [' . ($Res->payment['transaction_no']) . ']'
+                : $Res->payment['payment_method'];
+
+            $status = ($Res->status == 'pending')
+                ? '<span style="background:#DD4F42;color:#fff;padding:2px 8px;border-radius:3px;">Pending</span>'
+                : '<span style="background:#1BA160;color:#fff;padding:2px 8px;border-radius:3px;">No Status</span>';
+
+            $commission = $Res->commission ? $Res->commission . '%' : '0%';
+
+            $Data[] = [
+                'sn' => $sn,
+                'order_no' => $order_no,
+                'order_total' => $order_total,
+                'payment_id' => $payment,
+                'commission' => $commission,
+                'order_date' => $order_date,
+                'status' => $status,
+                'action' => $action,
+            ];
+
+            $sn++;
+        }
+
+        $res = [
+            "draw" => $draw,
+            "iTotalRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "iTotalDisplayRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "aaData" => $Data,
+        ];
+
+        return response()->json($res);
+    }
+    public function dropshipperReturnList(Request $request)
+    {
+        if (!$request->ajax()) {
+            return view('backend.dropshipper.order.return-list');
+        }
+
+        $draw = $request->input("draw");
+        $length = $request->input("length");
+        $start = $request->input("start");
+        $columns = $request->input('columns');
+
+        $Data = [];
+        $Result = Order::getDropshipperReturnResult($start, $length, $columns); // You’ll define this query in your Order model
+
+        $sn = $start + 1;
+        foreach ($Result as $Res) {
+
+            $DetailsRoute = route('dropshipper.orders.pending.details', $Res->id);
+
+            $action = "<a title='Details' class='btn btn-sm btn-info' href='$DetailsRoute'><i class='fas fa-eye'></i> Details</a>";
+
+            $order_no = 'ODR-#' . ($Res->order_no);
+            $order_total = ($Res->order_total);
+            $order_date = date('d-m-Y', strtotime($Res->created_at));
+
+            $payment = ($Res->payment['payment_method'] == 'Bkash')
+                ? 'Bkash [' . ($Res->payment['transaction_no']) . ']'
+                : $Res->payment['payment_method'];
+
+            $status = ($Res->status == 'pending')
+                ? '<span style="background:#DD4F42;color:#fff;padding:2px 8px;border-radius:3px;">Pending</span>'
+                : '<span style="background:#1BA160;color:#fff;padding:2px 8px;border-radius:3px;">No Status</span>';
+
+            $commission = $Res->commission ? $Res->commission . '%' : '0%';
+
+            $Data[] = [
+                'sn' => $sn,
+                'order_no' => $order_no,
+                'order_total' => $order_total,
+                'payment_id' => $payment,
+                'commission' => $commission,
+                'order_date' => $order_date,
+                'status' => $status,
+                'action' => $action,
+            ];
+
+            $sn++;
+        }
+
+        $res = [
+            "draw" => $draw,
+            "iTotalRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "iTotalDisplayRecords" => Order::where('status', 'pending')->where('dropshipper_id', Auth::id())->count(),
+            "aaData" => $Data,
+        ];
+
+        return response()->json($res);
+    }
 
     /* ===============================
        DROPSHIPPER - DELIVERED ORDERS
