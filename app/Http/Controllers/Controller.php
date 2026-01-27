@@ -19,6 +19,6 @@ class Controller extends BaseController
     public function setErrorMessage($message)
     {
         session()->flash('type','warning');
-        session()->flash('message', $message);
+        session()->flash('message', $message); 
     }
 }
