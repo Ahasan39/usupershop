@@ -226,6 +226,17 @@
         .product .product-image button {
             border: 1px solid #ddd;
             border-radius: 2px;
+            width: 100%;
+            height: 150px;
+            padding: 5px;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .product .product-image button img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .product-column {

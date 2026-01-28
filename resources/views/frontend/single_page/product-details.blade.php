@@ -832,7 +832,7 @@
                                                     <a href="{{ route('product.details.info', $product->slug) }}">
                                                         <img src="{{ $product->image ? asset('upload/product_images/' . $product->image) : asset('frontend/assets/images/no-image.png') }}"
                                                             alt="{{ $product->name }}" class="w-100"
-                                                            style="height:200px; object-fit:cover;">
+                                                            style="height:200px; object-fit:contain; background:#f8f9fa;">
                                                     </a>
                                                 </div>
                                                 <div class="product-info p-2">
