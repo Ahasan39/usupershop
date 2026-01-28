@@ -281,6 +281,30 @@ class Order extends Model
         }
     }
 
+    static function getSellerCancelResult($start, $length, $columns)
+    {
+        $Q = self::queryBuild2($columns);
+        if ($Q == null) {
+            return self::limit($length)->offset($start)->where('status', 'canceled')->where('shop_id', '!=', 'null')->get();
+        } else {
+            if ($length != -1)
+                $Q->limit($length)->offset($start);
+            return $Q->get();
+        }
+    }
+
+    static function getSellerReturnResult($start, $length, $columns)
+    {
+        $Q = self::queryBuild2($columns);
+        if ($Q == null) {
+            return self::limit($length)->offset($start)->where('status', 'return')->where('shop_id', '!=', 'null')->get();
+        } else {
+            if ($length != -1)
+                $Q->limit($length)->offset($start);
+            return $Q->get();
+        }
+    }
+
     static function countResult($columns)
     {
         $Q = self::queryBuild2($columns);
