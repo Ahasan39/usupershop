@@ -150,6 +150,8 @@ Route::group(['middleware' => ['auth', 'dropshipper']], function () {
             ->name('dropshipper.orders.delivered.details');
         Route::get('/details/{id}', [DropshipperOrderController::class, 'details'])
             ->name('dropshipper.orders.details');
+        Route::get('/track/{id}', [DropshipperOrderController::class, 'trackOrder'])
+            ->name('dropshipper.orders.track');
         Route::get('/create', [DropshipperOrderController::class, 'orderCreate'])
             ->name('dropshipper.orders.create');
 
