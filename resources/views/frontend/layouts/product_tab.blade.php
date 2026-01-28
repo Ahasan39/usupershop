@@ -54,23 +54,29 @@
                                     </h3>
 
                                     <div class="product-price">
-                                        @if (!empty($items->discount))
-                                            <span class="price">
-                                                @if ($items->discount_type == 1)
-                                                    &#2547;
-                                                    {{ $items->price - ($items->price * $items->discount) / 100 }}
-                                                @else
-                                                    &#2547; {{ $items->price - $items->discount }}
-                                                @endif
-                                            </span>
-                                        @else
-                                            <span class="price">&#2547;
-                                                {{ $items->price }}</span>
-                                        @endif
-
-                                        @if (!empty($items->discount))
-                                            <span class="price-before-discount">&#2547;
-                                                {{ $items->price }}</span>
+                                        @php
+                                            // Check if user is dropshipper and product has hole sale price
+                                            if (auth()->check() && auth()->user()->usertype === 'dropshipper' && isset($items->sale_price) && $items->sale_price > 0) {
+                                                $displayPrice = $items->sale_price;
+                                                $showOriginal = false;
+                                            } else {
+                                                // Regular customer pricing
+                                                if (!empty($items->discount)) {
+                                                    $displayPrice = $items->discount_type == 1
+                                                        ? $items->price - ($items->price * $items->discount) / 100
+                                                        : $items->price - $items->discount;
+                                                    $showOriginal = true;
+                                                } else {
+                                                    $displayPrice = $items->price;
+                                                    $showOriginal = false;
+                                                }
+                                            }
+                                        @endphp
+                                        
+                                        <span class="price">&#2547; {{ number_format($displayPrice, 2) }}</span>
+                                        
+                                        @if ($showOriginal)
+                                            <span class="price-before-discount">&#2547; {{ number_format($items->price, 2) }}</span>
                                         @endif
                                     </div>
                                     <!-- /.product-price -->

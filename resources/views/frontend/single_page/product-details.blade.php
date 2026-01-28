@@ -602,17 +602,32 @@
                                                             @php
                                                                 $price = $productDetails->price;
                                                                 $discount = $productDetails->discount ?? 0;
-                                                                $finalPrice =
-                                                                    $discount > 0
-                                                                        ? ($productDetails->discount_type == 1
-                                                                            ? $price - ($price * $discount) / 100
-                                                                            : $price - $discount)
-                                                                        : $price;
+                                                                
+                                                                // Check if user is dropshipper and product has hole sale price
+                                                                if (auth()->check() && auth()->user()->usertype === 'dropshipper' && isset($productDetails->sale_price) && $productDetails->sale_price > 0) {
+                                                                    $finalPrice = $productDetails->sale_price;
+                                                                    $showOriginalPrice = false;
+                                                                } else {
+                                                                    // Regular customer pricing
+                                                                    $finalPrice =
+                                                                        $discount > 0
+                                                                            ? ($productDetails->discount_type == 1
+                                                                                ? $price - ($price * $discount) / 100
+                                                                                : $price - $discount)
+                                                                            : $price;
+                                                                    $showOriginalPrice = $discount > 0;
+                                                                }
                                                             @endphp
 
                                                             <span id="product-price"
-                                                                class="price">৳{{ number_format($finalPrice, 2) }}</span><br>
-                                                            @if ($discount > 0)
+                                                                class="price">৳{{ number_format($finalPrice, 2) }}</span>
+                                                            
+                                                            @if (auth()->check() && auth()->user()->usertype === 'dropshipper' && isset($productDetails->sale_price) && $productDetails->sale_price > 0)
+                                                                <span class="badge badge-success ml-2">Wholesale Price</span>
+                                                            @endif
+                                                            
+                                                            <br>
+                                                            @if ($showOriginalPrice ?? false)
                                                                 <span id="product-original-price"
                                                                     class="price-strike">৳{{ number_format($price, 2) }}</span>
                                                             @else
@@ -998,57 +1013,31 @@
                 PROFIT CALCULATION (DEFINED FIRST)
             ============================== */
             window.showProfit = function() {
-                let selling = parseFloat($('#selling_price').val()) || 0;
+                let sellingInput = $('#selling_price').val();
+                let selling = parseFloat(sellingInput) || 0;
                 let cost = parseFloat($('#product-dropshipper-price').val()) || 0;
                 let qty = parseInt($('#qty').val()) || 1;
 
-                let profit = (selling * qty) - (cost * qty);
-
-                console.log('showProfit called:', {selling, cost, qty, profit});
-                console.log('Element exists:', $('#profit_display_main').length);
-
-                // Update profit display (use the correct element ID)
-                $('#profit_display_main').text('৳' + profit.toFixed(2));
+                // Only calculate profit if selling price is entered
+                if (sellingInput && sellingInput.trim() !== '' && selling > 0) {
+                    let profit = (selling * qty) - (cost * qty);
+                    $('#profit_display_main').text('৳' + profit.toFixed(2));
+                } else {
+                    // Show 0 or placeholder when no selling price
+                    $('#profit_display_main').text('৳0.00');
+                }
                 
                 // Update base price display
                 $('#base_price_display').text(cost.toFixed(2));
             };
 
             function updatePrice() {
-
-                let colorId = $('.color-checkbox:checked').data('color-id') || null;
-                let sizeId = $('.size-checkbox:checked').data('size-id') || null;
-
-                let variant = variants.find(v =>
-                    (!colorId || v.color_id == colorId) &&
-                    (!sizeId || v.size_id == sizeId)
-                );
-
-                let price = basePrice;
-
-                if (variant && variant.additional_price) {
-                    price += parseFloat(variant.additional_price);
-                }
-
-                let finalPrice = price;
-
-                if (discount > 0) {
-                    finalPrice = discountType == 1 ?
-                        price * (1 - discount / 100) :
-                        price - discount;
-                }
-
-                $('#product-price').text('৳' + finalPrice.toFixed(2));
-
-                if (finalPrice < price) {
-                    $('#product-original-price')
-                        .removeClass('d-none')
-                        .text('৳' + price.toFixed(2));
-                } else {
-                    $('#product-original-price').addClass('d-none');
-                }
-
-                $('#product-dropshipper-price').val(finalPrice.toFixed(2));
+                // Get the initial price from PHP (already calculated with Hole Sale Price if dropshipper)
+                let initialPrice = parseFloat($('#product-dropshipper-price').val()) || {{ $finalPrice }};
+                
+                // Don't recalculate - just use the PHP-calculated price
+                $('#product-price').text('৳' + initialPrice.toFixed(2));
+                $('#product-dropshipper-price').val(initialPrice.toFixed(2));
                 showProfit();
             }
 

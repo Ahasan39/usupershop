@@ -59,18 +59,25 @@
                                                         ?>
                                                     </h5>
                                                       <div class="product-price">
-                                        @if (!empty($items->discount))
+                                        @if (isset($items->sale_price) && $items->sale_price > 0)
+                                            <span class="price text-danger">
+                                                &#2547; {{ number_format($items->sale_price, 2) }}
+                                            </span>
+                                            <small class="badge badge-success">Wholesale</small>
+                                        @elseif (!empty($items->discount))
                                             <span class="price text-danger">
                                                 @if ($items->discount_type == 1)
                                                     &#2547;
-                                                    {{ $items->price - ($items->price * $items->discount) / 100 }}
+                                                    {{ number_format($items->price - ($items->price * $items->discount) / 100, 2) }}
                                                 @else
-                                                    &#2547; {{ $items->price - $items->discount }}
+                                                    &#2547; {{ number_format($items->price - $items->discount, 2) }}
                                                 @endif
                                             </span>
+                                            <small class="badge badge-warning">Discount</small>
                                         @else
                                             <span class="price text-danger">&#2547;
-                                                {{ $items->price }}</span>
+                                                {{ number_format($items->price, 2) }}</span>
+                                            <small class="badge badge-secondary">Regular</small>
                                         @endif
                                       
                                     </div>

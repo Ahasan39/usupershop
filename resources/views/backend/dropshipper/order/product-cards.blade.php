@@ -9,16 +9,23 @@
                         <h5 title="{{ $product->name }}">{{ \Illuminate\Support\Str::limit($product->name, 25) }}</h5>
 
                         <div class="product-price">
-                            @if(!empty($product->discount))
+                            @if(isset($product->sale_price) && $product->sale_price > 0)
+                                <span class="price text-danger">
+                                    &#2547; {{ number_format($product->sale_price, 2) }}
+                                </span>
+                                <small class="badge badge-success">Wholesale</small>
+                            @elseif(!empty($product->discount))
                                 <span class="price text-danger">
                                     @if($product->discount_type == 1)
-                                        &#2547; {{ $product->price - ($product->price * $product->discount / 100) }}
+                                        &#2547; {{ number_format($product->price - ($product->price * $product->discount / 100), 2) }}
                                     @else
-                                        &#2547; {{ $product->price - $product->discount }}
+                                        &#2547; {{ number_format($product->price - $product->discount, 2) }}
                                     @endif
                                 </span>
+                                <small class="badge badge-warning">Discount</small>
                             @else
-                                <span class="price text-danger">&#2547; {{ $product->price }}</span>
+                                <span class="price text-danger">&#2547; {{ number_format($product->price, 2) }}</span>
+                                <small class="badge badge-secondary">Regular</small>
                             @endif
                         </div>
 

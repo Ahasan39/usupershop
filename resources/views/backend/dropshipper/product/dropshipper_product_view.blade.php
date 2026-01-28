@@ -54,7 +54,13 @@
                                     </tr>
                                     <tr>
                                         <td width="40%">Price</td>
-                                        <td width="60%" class="copy-cell">{{ $showData->price }} Tk.</td>
+                                        <td width="60%" class="copy-cell">
+                                            @if (isset($showData->sale_price) && $showData->sale_price > 0)
+                                                {{ $showData->sale_price }} Tk. <span class="badge badge-success">Hole Sale Price</span>
+                                            @else
+                                                {{ $showData->price }} Tk.
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td width="40%">Short Description</td>
