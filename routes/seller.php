@@ -50,6 +50,13 @@ Route::group(['middleware' => ['auth', 'seller']], function () {
 
     Route::prefix('seller-orders')->group(function () {
         Route::get('/pending/list', [SellerOrderController::class, 'sellerPending'])->name('seller.orders.pending.list');
+        Route::get('/confirmed/list', [SellerOrderController::class, 'sellerConfirmed'])->name('seller.orders.confirmed.list');
+        Route::get('/packaging/list', [SellerOrderController::class, 'sellerPackaging'])->name('seller.orders.packaging.list');
+        Route::get('/shipment/list', [SellerOrderController::class, 'sellerShipment'])->name('seller.orders.shipment.list');
+        Route::get('/delivered/list', [SellerOrderController::class, 'sellerDelivered'])->name('seller.orders.delivered.list');
+        Route::get('/cancel/list', [SellerOrderController::class, 'sellerCancel'])->name('seller.orders.cancel.list');
+        Route::get('/return/list', [SellerOrderController::class, 'sellerReturn'])->name('seller.orders.return.list');
+
         Route::get('/pending/print/{id}', [SellerOrderController::class, 'sellerPendingPrintOrder'])->name('seller.orders_print');
         Route::get('/plist', [SellerOrderController::class, 'sellerPendingList'])->name('seller.orders.plist');
         Route::get('/delivered/list', [SellerOrderController::class, 'sellerDelivered'])->name('seller.orders.delivered.list');
@@ -58,6 +65,11 @@ Route::group(['middleware' => ['auth', 'seller']], function () {
         Route::get('/pending/details/{id}', [SellerOrderController::class, 'sellerPendingDetails'])->name('seller.pending.orders.details');
         Route::get('/delivered/details/{id}', [SellerOrderController::class, 'sellerDeliveredDetails'])->name('seller.delivered.orders.details');
         Route::get('/details/{id}', [SellerOrderController::class, 'sellerDetails'])->name('seller.orders.details');
+        Route::get('/clist', [SellerOrderController::class, 'sellerCancelList'])->name('seller.orders.clist');
+        Route::get('/cancel/details/{id}', [SellerOrderController::class, 'sellerCancelDetails'])->name('seller.cancel.orders.details');
+        Route::get('/rlist', [SellerOrderController::class, 'sellerReturnList'])->name('seller.orders.rlist');
+        Route::get('/return/details/{id}', [SellerOrderController::class, 'sellerReturnDetails'])->name('seller.return.orders.details');
+        Route::get('/track/{id}', [SellerOrderController::class, 'trackOrder'])->name('seller.orders.track');
     });
 
     Route::prefix('seller-reports')->group(function () {
