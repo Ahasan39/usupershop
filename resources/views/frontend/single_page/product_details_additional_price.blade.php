@@ -764,7 +764,8 @@
             thumbnails.forEach((thumb, index) => {
                 thumb.addEventListener("click", function(event) {
                     event.preventDefault();
-                    currentIndex = index;
+                    let clickedIndex = Array.from(thumbnails).indexOf(this);
+                    currentIndex = clickedIndex;
                     showSlide(currentIndex);
                 });
             });

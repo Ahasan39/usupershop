@@ -966,7 +966,8 @@
 
                 $thumbs.on('click', function(e) {
                     e.preventDefault();
-                    showSlide($(this).index());
+                    let clickedIndex = $thumbs.index(this);
+                    showSlide(clickedIndex);
                 });
             }
 
