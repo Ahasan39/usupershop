@@ -51,7 +51,7 @@ class ReportController extends Controller
         $user = Auth::user();
 
         $data = Transaction::where('wallet_type', Constant::WALLET_TYPE['balance_wallet'])
-            ->where('tnx_type', Constant::TRANSACTION_TYPE['product_sales'])
+            ->where('tnx_type', Constant::TRANSACTION_TYPE['product_seles'])
             ->where('user_id', $user->id)
             ->get();
 
@@ -67,7 +67,7 @@ class ReportController extends Controller
         $user = Auth::user();
 
         $data = Transaction::where('wallet_type', Constant::WALLET_TYPE['balance_wallet'])
-            ->where('tnx_type', Constant::TRANSACTION_TYPE['dropshipper_sales_commission'])
+            ->where('tnx_type', Constant::TRANSACTION_TYPE['reseller_seles_commission'])
             ->where('user_id', $user->id)
             ->get();
 

@@ -162,7 +162,7 @@
         </li>
 
         {{-- Reports --}}
-        {{-- <li class="nav-item {{ isMenuOpen(['dropshipper.reports.'], $routeName) ? 'menu-open' : '' }}">
+        <li class="nav-item {{ isMenuOpen(['dropshipper.reports.'], $routeName) ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ isMenuOpen(['dropshipper.reports.'], $routeName) ? 'active' : '' }}">
                 <i class="nav-icon fas fa-chart-line"></i>
                 <p>
@@ -193,7 +193,7 @@
                     </a>
                 </li>
             </ul>
-        </li> --}}
+        </li>
 
         {{-- Wallet --}}
         <li
