@@ -802,6 +802,14 @@
                                                     class="icon fa fa-user"></i>আমার একাউন্ট</a>
                                         </li>
                                     @endif
+                                    @if (auth()->user()->usertype === 'dropshipper')
+                                        <li>
+                                            <a class="english_lang" href="{{ route('dropshipper.dashboard') }}"><i
+                                                    class="icon fa fa-user"></i>My Account</a>
+                                            <a class="bangla_lang" style="display:none" href="{{ route('dropshipper.dashboard') }}"><i
+                                                    class="icon fa fa-user"></i>আমার একাউন্ট</a>
+                                        </li>
+                                    @endif
                                 @else
                                     <li>
                                         <a class="english_lang" href="{{ route('customer.login') }}"><i
@@ -955,9 +963,14 @@
                 </aside>
                 <div class="row">
                     <div class="col-xs-7">
-                        <a href="{{ url('') }}">
-                            <img  class="mobile-logo" src="{{ asset('upload/logo_image/' . Helper::getLogo()->image) }}"
-                                alt="{{ Helper::getLogo()->name }}">
+                        <a href="{{ url('/') }}">
+                            @if(isset($shop_user) && $shop_user->logo)
+                                <img class="mobile-logo" src="{{ asset('upload/user_images/' . $shop_user->logo) }}"
+                                    alt="{{ $shop_user->shop_name ?? $shop_user->name }}">
+                            @else
+                                <img class="mobile-logo" src="{{ asset('upload/logo_image/' . Helper::getLogo()->image) }}"
+                                    alt="{{ Helper::getLogo()->name }}">
+                            @endif
                         </a>
                     </div>
                     <div class="col-xs-5 animate-dropdown top-cart-row">
@@ -1032,10 +1045,13 @@
                     <!-- ================ LOGO ============== -->
                     <div class="logo">
                         <a href="{{ url('/') }}">
-                            <img class="desktop-logo" src="{{ asset('upload/logo_image/' . Helper::getLogo()->image) }}"
-                                alt="{{ Helper::getLogo()->name }}">
-                            <!-- <img class="mobile-logo" src="{{ asset('frontend') }}/images/favicon.png"
-                                alt="{{ Helper::getLogo()->name }}"> -->
+                            @if(isset($shop_user) && $shop_user->logo)
+                                <img class="desktop-logo" src="{{ asset('upload/user_images/' . $shop_user->logo) }}"
+                                    alt="{{ $shop_user->shop_name ?? $shop_user->name }}">
+                            @else
+                                <img class="desktop-logo" src="{{ asset('upload/logo_image/' . Helper::getLogo()->image) }}"
+                                    alt="{{ Helper::getLogo()->name }}">
+                            @endif
                         </a>
                     </div>
                     <!-- /.logo -->

@@ -24,7 +24,8 @@ class SellerShopController extends Controller
 {
     public function shop(Request $request){
         $shopID=$request->segment(2);
-        $data['refercode'] = \App\Models\User::where('id',$shopID)->select('code')->first();
+        $data['shop_user'] = \App\Models\User::find($shopID);
+        $data['refercode'] = $data['shop_user']->code ?? '';
         $data['shopID'] = $shopID;
         $data['sellershopcats'] =  DB::table('my_shops')->join('products', 'products.id', '=',
         'my_shops.product_id')->where('my_shops.user_id', $shopID)
@@ -70,6 +71,7 @@ class SellerShopController extends Controller
     {
         $data['sliders'] = Slider::select('id', 'name', 'image')->orderBy('id', 'desc')->get();
         $data['shopID'] = $shopID;
+        $data['shop_user'] = \App\Models\User::find($shopID);
         // If a shop ID is provided, include shop-specific data
         if (!empty($shopID)) {
             $data['shopCategories'] = DB::table('my_shops')->join('products', 'products.id', '=',
@@ -119,6 +121,7 @@ class SellerShopController extends Controller
         // Both $shopID and $category_id are passed dynamically
         $data['category'] = Category::find($category_id);
         $data['shopID'] = request()->segment(2); 
+        $data['shop_user'] = \App\Models\User::find($shopID);
         $data['products'] = DB::table('my_shops')
             ->join('products', 'products.id', '=', 'my_shops.product_id')
             ->where('products.category_id', '=', $category_id)

@@ -130,7 +130,13 @@ $banners = Helper::bannerImage()
                                         <div class="breadcrumb-inner">
                                             <ul class="list-inline list-unstyled">
                                                 <li><a href="#">Home</a></li>
-                                                <li class='active'>Seller Shop</li>
+                                                <li class='active'>
+                                                    @if($shop_user->usertype == 'dropshipper')
+                                                        Dropshipper Shop
+                                                    @else
+                                                        Seller Shop
+                                                    @endif
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>

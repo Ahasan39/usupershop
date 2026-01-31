@@ -212,8 +212,16 @@
                             class="fas fa-bars"></i></a>
                 </li>
 
+                @if (auth()->user()->usertype === 'dropshipper')
+                    <li class="nav-item">
+                        <a class="btn btn-success btn-sm mt-1" href="<?php echo url('shops/' . auth()->user()->id . '?refer=' . auth()->user()->code); ?>" target="_blank">Go Shop</a>
+                    </li>
+                    <li class="nav-item pl-2">
+                        <button class="copy-btn btn btn-warning text-white btn-sm mt-1" onclick="copyReferLink()">Referal Link</button>
+                    </li>
 
-
+                    <textarea type="text" id="password" class="form-control d-none" rows="2" cols="4">{{ route('seller.signup') }}?refer={{ auth()->user()->refer_code }}</textarea>
+                @endif
             </ul>
             <!-- Left navbar links -->
             <!-- Right navbar links -->
