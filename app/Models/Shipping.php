@@ -12,6 +12,7 @@ class Shipping extends Model
      protected $fillable = [
         'user_id',
         'name',
+        'email',
         'mobile',
         'address',
     ];

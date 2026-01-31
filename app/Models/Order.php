@@ -36,7 +36,8 @@ class Order extends Model
         'courier_response',
         'courier_assigned_at',
         'courier_assigned_by',
-        'dropshipper_id'
+        'dropshipper_id',
+        'dropshipper_profit'
     ];
     public function payment()
     {

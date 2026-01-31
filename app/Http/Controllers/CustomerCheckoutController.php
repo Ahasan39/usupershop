@@ -208,7 +208,7 @@ class CustomerCheckoutController extends Controller
             // Order
             $order = Order::create([
                 'user_id' => $user->id,
-                'dropshipper_id' => ($user->usertype == 'dropshipper') ? $user->id : '',
+                'dropshipper_id' => ($user->usertype == 'dropshipper') ? $user->id : null,
                 'shipping_id' => $shipping->id,
                 'payment_id' => $payment->id,
                 'invoice_no' => $payment->id,
@@ -241,28 +241,43 @@ class CustomerCheckoutController extends Controller
                 }
             }
 
-            // Process payment
-            $payment_url = null;
-
-            if ($request->payment_method === 'bkash') {
-                $payment_url = $this->processBkashPayment($payment_amount, $order->id);
-            } elseif ($request->payment_method === 'eps') {
-                $payment_url = $this->processEPSpaymenyGateway($payment_amount, $order->id);
-            } elseif ($payment_method === 3) {
-                 $payment_url = $this->processBkashPayment($payment_amount, $order->id);
-            }
-
+            // Commit transaction BEFORE payment processing
+            // This ensures order is saved even if payment gateway fails
             DB::commit();
+
+            // Clear cart only after successful commit
+            Cart::where('cookie_id', $cookie_id)->delete();
             Cookie::queue(Cookie::forget('customer_cookie_id'));
 
-            if ($payment_url && is_array($payment_url) && $payment_url['status'] === true) {
-                return response()->json([
-                    'status' => true,
-                    'type' => 'redirect_payment',
-                    'url' => $payment_url['url'],
-                    'message' => 'Redirecting to payment gateway.'
+            // Process payment AFTER order is saved
+            $payment_url = null;
+
+            try {
+                if ($request->payment_method === 'bkash') {
+                    $payment_url = $this->processBkashPayment($payment_amount, $order->id);
+                } elseif ($request->payment_method === 'eps') {
+                    $payment_url = $this->processEPSpaymenyGateway($payment_amount, $order->id);
+                }
+                // Note: COD (payment_method === 3) doesn't need payment gateway processing
+                
+                // If payment gateway returns a redirect URL, use it
+                if ($payment_url && is_array($payment_url) && $payment_url['status'] === true) {
+                    return response()->json([
+                        'status' => true,
+                        'type' => 'redirect_payment',
+                        'url' => $payment_url['url'],
+                        'message' => 'Redirecting to payment gateway.'
+                    ]);
+                }
+            } catch (\Exception $paymentError) {
+                // Log payment error but don't fail the order
+                \Log::warning('Payment gateway error (order still saved): ' . $paymentError->getMessage(), [
+                    'order_id' => $order->id,
+                    'payment_method' => $request->payment_method
                 ]);
             }
+
+            // Return success with order details page URL
             if (auth()->user()->usertype == 'dropshipper') {
                 return response()->json([
                     'status' => true,
@@ -270,6 +285,7 @@ class CustomerCheckoutController extends Controller
                     'message' => 'Order placed successfully!'
                 ]);
             }
+            
             if (auth()->user()->usertype == 'customer') {
                 return response()->json([
                     'status' => true,
@@ -279,13 +295,19 @@ class CustomerCheckoutController extends Controller
             }
 
         } catch (\Exception $e) {
-          //  dd($e->getMessage());
             DB::rollBack();
+            
+            // Log the error for debugging
+            \Log::error('Order Checkout Error: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'status' => false,
                 'type' => 'error',
-                'message' => 'Something went wrong during checkout.',
-                'error_msg' => $e->getMessage(),
+                'message' => 'Something went wrong during checkout. Please try again.',
+                'error_msg' => config('app.debug') ? $e->getMessage() : 'An error occurred'
             ]);
         }
     }

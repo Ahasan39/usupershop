@@ -831,7 +831,14 @@
                         }, 1000);
 
                     } else {
-                        success_msg('' + res.message);
+                        // Show error message for failed checkout
+                        error_msg('' + res.message);
+                        
+                        // Optional: Display detailed error if available
+                        if (res.error_msg) {
+                            console.error('Checkout Error Details:', res.error_msg);
+                        }
+                        
                         setTimeout(() => {
                             if (res.type === 'auth') {
                                 window.location.href = "{{ route('customer.login') }}";
@@ -841,10 +848,9 @@
                                 window.location.href = "{{ route('show.cart') }}";
                             } else if (res.type === 'cart') {
                                 window.location.href = "{{ route('show.cart') }}";
-                            } else {
-                                window.location.href = "{{ route('show.cart') }}";
                             }
-                        }, 1000);
+                            // Don't redirect on general errors, let user retry
+                        }, 2000);
                     }
                 },
                 error: function(error) {
