@@ -42,6 +42,27 @@
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+    @php
+        use App\Models\ColorSetting;
+        $colors = ColorSetting::getAllColors();
+    @endphp
+    <style>
+        :root {
+            --header-bg: {{ $colors['header_bg'] ?? '#0824AC' }};
+            --sub-header-bg: {{ $colors['sub_header_bg'] ?? '#0a00a1' }};
+            --header-text: {{ $colors['header_text'] ?? '#000000' }};
+            --footer-bg: {{ $colors['footer_bg'] ?? '#202020' }};
+            --footer-text: {{ $colors['footer_text'] ?? '#ffffff' }};
+            --search-icon-bg: {{ $colors['search_icon_bg'] ?? '#007bff' }};
+            --search-icon-color: {{ $colors['search_icon_color'] ?? '#ffffff' }};
+            --add-to-cart-bg: {{ $colors['add_to_cart_bg'] ?? '#0824ac' }};
+            --add-to-cart-text: {{ $colors['add_to_cart_text'] ?? '#ffffff' }};
+            --price-color: {{ $colors['price_color'] ?? '#0824AC' }};
+            --primary-button: {{ $colors['primary_button'] ?? '#007bff' }};
+            --secondary-button: {{ $colors['secondary_button'] ?? '#6c757d' }};
+        }
+    </style>
+
     <style type="text/css">
         @media (min-width: 1200px) {
 
