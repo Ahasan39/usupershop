@@ -19,6 +19,38 @@
     <meta name="twitter:description"
         content="{{ $productDetails->meta_description ?? Str::limit(strip_tags($productDetails->description), 160) }}">
     <meta name="twitter:image" content="{{ asset('storage/products/' . $productDetails->image) }}">
+
+    {{-- JSON-LD Schema for Product --}}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "{{ $productDetails->name }}",
+      "image": [
+        "{{ asset('storage/products/' . $productDetails->image) }}"
+        @if($product_sub_image->count() > 0)
+        @foreach($product_sub_image as $img)
+        ,"{{ asset('upload/product_images/product_sub_images/' . $img->sub_image) }}"
+        @endforeach
+        @endif
+       ],
+      "description": "{{ Str::limit(strip_tags($productDetails->description), 160) }}",
+      "sku": "{{ $productDetails->sku ?? $productDetails->id }}",
+      "mpn": "{{ $productDetails->id }}",
+      "brand": {
+        "@type": "Brand",
+        "name": "{{ $productDetails->brand->name ?? config('app.name') }}"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "{{ url()->current() }}",
+        "priceCurrency": "BDT",
+        "price": "{{ $productDetails->discount > 0 ? ($productDetails->discount_type == 1 ? $productDetails->price - ($productDetails->price * $productDetails->discount / 100) : $productDetails->price - $productDetails->discount) : $productDetails->price }}",
+        "availability": "{{ $productDetails->quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
+        "itemCondition": "https://schema.org/NewCondition"
+      }
+    }
+    </script>
 @endpush
 
 @section('custom_css')
@@ -112,7 +144,7 @@
             box-shadow: 0 6px 20px rgba(247, 25, 154, 0.6);
         }
 
-        /* Optional: Small badge showing image count */
+        /* Optional: Small badge showing image count */ 
         .download-count {
             position: absolute;
             top: -8px;
@@ -514,9 +546,9 @@
                                         <input type="hidden" id="product_id" value="{{ $productDetails->id }}">
 
                                         <div class="product-info">
-                                            <h3 class="name english_lang">{{ $productDetails->name }}</h3>
-                                            <h3 class="name bangla_lang" style="display:none;">
-                                                {{ $productDetails->name_bn }}</h3>
+                                            <h1 class="name english_lang">{{ $productDetails->name }}</h1>
+                                            <h1 class="name bangla_lang" style="display:none;">
+                                                {{ $productDetails->name_bn }}</h1>
 
                                             <p class="attribute"><strong>Category:</strong>
                                                 {{ $productDetails->category->name }}</p>

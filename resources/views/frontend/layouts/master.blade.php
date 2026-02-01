@@ -19,6 +19,7 @@
     <meta property="og:description" content="@yield('og_description', config('app.name') . ' - মানসম্মত পণ্য দ্রুত ডেলিভারি সহ')" />
     <meta property="og:image" content="@yield('og_image', asset('frontend/images/og-default.jpg'))" />
     <meta property="og:url" content="{{ url()->current() }}" />
+    <link rel="canonical" href="{{ url()->current() }}" />
     <meta property="og:type" content="@yield('og_type', 'website')" />
 
     {{-- Twitter Card --}}

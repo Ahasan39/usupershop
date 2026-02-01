@@ -1,7 +1,42 @@
 @extends('frontend.layouts.master')
 @section('title')
-    {{ config('app.name') }} | Best Online Shop
+    {{ config('app.name') }} | Best Online Shop In Bangladesh
 @endsection
+
+@section('meta_description', 'Welcome to ' . config('app.name') . ' - The best online shopping platform in Bangladesh. Buy groceries, electronics, fashion, and more at the best prices. Fast delivery and secure payment.')
+@section('meta_keywords', 'online shop, ecommerce, bangladesh, grocery, fashion, electronics, ' . config('app.name'))
+@section('meta_author', config('app.name'))
+
+@push('meta')
+    <meta property="og:title" content="{{ config('app.name') }} | Best Online Shop In Bangladesh" />
+    <meta property="og:description" content="Welcome to {{ config('app.name') }} - The best online shopping platform in Bangladesh. Shop now for amazing deals!" />
+    <meta property="og:image" content="{{ asset('frontend/assets/images/banners/home-banner1212.jpg') }}" />
+    <meta property="og:url" content="{{ url('/') }}" />
+    <meta property="og:type" content="website" />
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ config('app.name') }} | Best Online Shop">
+    <meta name="twitter:description" content="Shop at {{ config('app.name') }} for the best products at unbeatable prices.">
+    {{-- Organization Schema --}}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org", 
+      "@type": "Organization",
+      "name": "{{ config('app.name') }}",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('frontend/assets/images/logo.png') }}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+8801700000000",
+        "contactType": "customer service"
+      },
+      "sameAs": [
+        "https://www.facebook.com/yourpage",
+        "https://twitter.com/yourpage"
+      ]
+    }
+    </script>
+@endpush
 @section('custom_css')
     <style>
 
@@ -99,6 +134,7 @@
 @endsection
 @section('content')
     <div class="body-content" id="top-banner-and-menu">
+        <h1 class="sr-only" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">{{ config('app.name') }} - Best Online Shopping in Bangladesh</h1>
         <div class="container">
             <div class="row home-banner-row">
                 <div class="col-xs-12 col-sm-12 col-md-8 sliderFixed">

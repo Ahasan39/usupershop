@@ -13,7 +13,7 @@
     ', ক্যাটাগরি প্রোডাক্ট, অনলাইন শপ, বাংলাদেশ,
     মানসম্মত পণ্য')
 
-@section('meta_author', config('app.name'))
+@section('meta_author', config('app.name')) 
 
 @push('meta')
     {{-- Open Graph / Facebook --}}
@@ -188,7 +188,7 @@
                                         <div class="breadcrumb-inner">
                                             <ul class="list-inline list-unstyled">
                                                 <li><a href="#">Home</a></li>
-                                                <li class='active'>{{ $category_name }}</li>
+                                                <li class='active'><h1>{{ $category_name }}</h1></li>
                                             </ul>
                                         </div>
                                     </div>
