@@ -97,9 +97,9 @@ class GenerateSitemap extends Command
 
         $xml .= '</urlset>';
 
-        File::put(public_path('sitemap.xml'), $xml);
+        File::put(base_path('sitemap.xml'), $xml);
 
-        $this->info('Sitemap generated successfully at ' . public_path('sitemap.xml'));
+        $this->info('Sitemap generated successfully at ' . base_path('sitemap.xml'));
         return 0;
     }
 }
