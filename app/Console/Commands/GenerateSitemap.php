@@ -48,7 +48,7 @@ class GenerateSitemap extends Command
         $baseUrl = rtrim($baseUrl, '/');
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
+        $xml .= '<?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         // Helper to add url
@@ -100,8 +100,9 @@ class GenerateSitemap extends Command
         $xml .= '</urlset>';
 
         File::put(base_path('sitemap.xml'), $xml);
+        File::put(public_path('sitemap.xml'), $xml);
 
-        $this->info('Sitemap generated successfully at ' . base_path('sitemap.xml'));
+        $this->info('Sitemap generated successfully at ' . base_path('sitemap.xml') . ' and ' . public_path('sitemap.xml'));
         return 0;
     }
 }
