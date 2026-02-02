@@ -1063,18 +1063,23 @@
         }
 
         $(document).ready(function() {
-            // SEO Fix: Ensure all links are crawlable (especially Lightbox close button)
+            // SEO Fix: Ensure all links are crawlable (especially Lightbox navigation)
             const fixLinks = () => {
                 $('a.lb-close, a.lb-prev, a.lb-next, a.nav-close').each(function() {
-                    if (!$(this).attr('href')) {
-                        $(this).attr('href', 'javascript:void(0)');
+                    if (!$(this).attr('href') || $(this).attr('href') === 'javascript:void(0)') {
+                        $(this).attr('href', '#');
+                        $(this).attr('rel', 'nofollow');
+                        // Prevent jumping while being crawlable
+                        $(this).on('click', function(e) {
+                            e.preventDefault();
+                        });
                     }
                 });
             };
             
-            // Run on load and on any click that might open a lightbox
+            // Run on load and on any click that might open a dynamic element
             fixLinks();
-            $(document).on('click', '[data-lightbox], .header-user', function() {
+            $(document).on('click', '[data-lightbox], .header-user, .profile-nav-btn', function() {
                 setTimeout(fixLinks, 500);
             });
         });
