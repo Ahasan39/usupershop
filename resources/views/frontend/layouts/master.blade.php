@@ -9,7 +9,7 @@
 
 
     {{-- Default SEO Meta (Fallback) --}}
-    <meta name="description" content="@yield('meta_description', config('app.name') . ' - আপনার নির্ভরযোগ্য অনলাইন শপ। ঘরে বসেই কিনুন গ্রোসারি, কসমেটিক্স, হেলথ কেয়ার, বেবি প্রোডাক্ট ও আরও অনেক কিছু। দ্রুত ডেলিভারি ও সাশ্রয়ী দামে মানসম্মত পণ্য পেতে এখনই অর্ডার করুন!')" />
+    <meta name="description" content="@yield('meta_description', 'U Super Shop | Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা! সেরা ডিলে প্রিমিয়াম শপিং করুন অথবা সেলার ও ড্রপশিপার হয়ে ইনভেস্টমেন্ট ছাড়াই ব্যবসা শুরু করুন। দ্রুত ডেলিভারি ও বিশ্বস্ততার নিশ্চয়তা। আজই যোগ দিন | আনলিমিটেড রেফার বোনাসের সেরা প্ল্যাটফর্ম। এখনই ভিজিট করুন!')" />
     <meta name="keywords" content="@yield('meta_keywords', config('app.name') . ', অনলাইন শপ, গ্রোসারি, কসমেটিক্স, হেলথ কেয়ার, বেবি প্রোডাক্ট')" />
     <meta name="author" content="@yield('meta_author', config('app.name'))" />
     <meta name="robots" content="@yield('meta_robots', 'all')" />
@@ -1061,6 +1061,23 @@
                 $("#profit_display").text('Profit: ৳' + profit.toFixed(2));
             }
         }
+
+        $(document).ready(function() {
+            // SEO Fix: Ensure all links are crawlable (especially Lightbox close button)
+            const fixLinks = () => {
+                $('a.lb-close, a.lb-prev, a.lb-next, a.nav-close').each(function() {
+                    if (!$(this).attr('href')) {
+                        $(this).attr('href', 'javascript:void(0)');
+                    }
+                });
+            };
+            
+            // Run on load and on any click that might open a lightbox
+            fixLinks();
+            $(document).on('click', '[data-lightbox], .header-user', function() {
+                setTimeout(fixLinks, 500);
+            });
+        });
     </script>
 
 

@@ -2,7 +2,7 @@
     <div id="owl-main" class="owl-carousel">
         @foreach ($sliders as $slider)
             <div class="item">
-                <img src="{{ asset('upload/slider_images/' . $slider->image) }}" alt="" >
+                <img src="{{ asset('upload/slider_images/' . $slider->image) }}" alt="Slider Image" >
             </div>
         @endforeach
     </div>

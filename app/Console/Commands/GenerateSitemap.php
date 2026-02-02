@@ -48,6 +48,7 @@ class GenerateSitemap extends Command
         $baseUrl = rtrim($baseUrl, '/');
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xml .= '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         // Helper to add url
@@ -69,6 +70,7 @@ class GenerateSitemap extends Command
         $addUrl('/product-list', '0.9', 'daily');
         $addUrl('/hot-deals', '0.9', 'daily');
         $addUrl('/speacial-offers', '0.9', 'daily');
+        $addUrl('/seller/signup', '0.8', 'monthly'); // Reach more sellers
 
         // Products
         $this->info('Adding products...');

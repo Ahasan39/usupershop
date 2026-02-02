@@ -99,28 +99,28 @@
         <a href="{{ route('product.list') }}"
             style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/category-svgrepo-com.svg') }}"
-                style="width: 23px; height: 23px;filter: invert(1);" alt="">
+                style="width: 23px; height: 23px;filter: invert(1);" alt="Shop Icon">
             <br>Shop
         </a>
 
         <a href="javascript::void(0)" data-toggle="modal" data-target="#exampleModal"
             style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/location-target-svgrepo-com.svg') }}"
-                style="width: 23px; height: 23px;filter: invert(1);" alt="">
+                style="width: 23px; height: 23px;filter: invert(1);" alt="Location Icon">
             <br>Order Track
         </a>
 
         <a href="{{ url('./') }}"
             style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/home-1-svgrepo-com.svg') }}"
-                style="width: 25px; height: 25px;filter: invert(1);" alt="">
+                style="width: 25px; height: 25px;filter: invert(1);" alt="Home Icon">
             <br>Home
         </a>
 
         <a href="{{ route('show.cart') }}"
             style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/cart-large-svgrepo-com.svg') }}"
-                style="width: 25px; height: 25px;filter: invert(1);" alt="">
+                style="width: 25px; height: 25px;filter: invert(1);" alt="Cart Icon">
             <br>My Cart
         </a>
         {{-- <a href="{{ url('/customer/dashboard') }}" style="color: white; text-align: center; font-size: 12px;">
@@ -272,7 +272,7 @@
                                     </span>
                                 </div>
                                 <div class="media-body">
-                                    <p>{{ $footercontent->address ?? '' }}</p>
+                                    <p>{{ $footercontent->address ?? 'Dhaka Bangladesh' }}</p>
                                 </div>
                             </li>
 
@@ -294,7 +294,7 @@
                                     </span>
                                 </div>
                                 <div class="media-body">
-                                    <span><a href="#">{{ $footercontent->email ?? '' }}</a></span>
+                                    <span><a href="mailto:{{ $footercontent->email ?? 'info@usupershop.com' }}">{{ $footercontent->email ?? 'info@usupershop.com' }}</a></span>
                                 </div>
                             </li>
                         </ul>
@@ -362,45 +362,52 @@
                     <div class="module-body social">
                         <ul class="link">
                             <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->facebook }}"
+                                <a target="_blank" rel="nofollow" href="{{ $footercontent->facebook ?? 'https://www.facebook.com/share/1VjqK6xoDm/' }}"
                                     title="Facebook">
                                     <img src="{{ asset('upload/contact/' . $footercontent->facebook_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="Facebook" />
                                 </a>
                             </li>
                             <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->youtube }}"
+                                <a target="_blank" rel="nofollow" href="{{ $footercontent->youtube ?? 'https://youtube.com/@usupershop?feature=shared' }}"
                                     title="youtube">
                                     <img src="{{ asset('upload/contact/' . $footercontent->youtube_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="Youtube" />
                                 </a>
                             </li>
                             <li class="pull-left">
                                 <a target="_blank" rel="nofollow" href="{{ $footercontent->twitter }}"
                                     title="twitter">
                                     <img src="{{ asset('upload/contact/' . $footercontent->twitter_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="Twitter" />
                                 </a>
                             </li>
                             <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->instagram }}"
-                                    title="PInterest">
+                                <a target="_blank" rel="nofollow" href="{{ $footercontent->instagram ?? 'https://www.instagram.com/usupershop?igsh=MXducXBidGE5NzRsNQ==' }}"
+                                    title="Instagram">
                                     <img src="{{ asset('upload/contact/' . $footercontent->instagram_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="Instagram" />
                                 </a>
                             </li>
                             <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->telegram }}"
-                                    title="PInterest">
+                                <a target="_blank" rel="nofollow" href="{{ $footercontent->telegram ?? 'https://t.me/usupershop1' }}"
+                                    title="Telegram">
                                     <img src="{{ asset('upload/contact/' . $footercontent->telegram_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="Telegram" />
                                 </a>
                             </li>
                             <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->whatsapp }}"
-                                    title="PInterest">
+                                <a target="_blank" rel="nofollow" href="{{ $footercontent->whatsapp ?? 'https://wa.me/88017' }}"
+                                    title="WhatsApp">
                                     <img src="{{ asset('upload/contact/' . $footercontent->whatsapp_icon) }}"
-                                        width="30" style="border-radius:10%;" />
+                                        width="30" style="border-radius:10%;" alt="WhatsApp" />
+                                </a>
+                            </li>
+                            <li class="pull-left">
+                                <a target="_blank" rel="nofollow" href="https://tiktok.com/@usupershop"
+                                    title="TikTok">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"
+                                        width="30" style="border-radius:10%;" alt="TikTok" />
                                 </a>
                             </li>
 
@@ -414,20 +421,20 @@
                         <ul class="payment-methods">
                             <li style="padding:4px;">
                                 <a href="#" class="image">
-                                    <img src="{{ asset('frontend') }}/assets/images/bkash.png" alt=""
+                                    <img src="{{ asset('frontend') }}/assets/images/bkash.png" alt="bKash"
                                         style="background: #fff; padding: 4px; border-radius: 2px;    height: 36px;width: 55px;" />
                                 </a>
                             </li>
                             <li style="padding:4px;">
                                 <a href="#" class="image">
-                                    <img src="{{ asset('frontend') }}/assets/images/nagad.png" alt=""
+                                    <img src="{{ asset('frontend') }}/assets/images/nagad.png" alt="Nagad"
                                         style="background: #fff; padding: 4px; border-radius: 2px;height: 36px;width: 55px;" />
                                 </a>
                             </li>
                             <li style="padding:4px;">
                                 <a href="https://play.google.com/store/apps/details?id=com.usuper.shop&pli=1"
                                     class="image">
-                                    <img src="{{ asset('frontend') }}/assets/images/Google-play.png" alt=""
+                                    <img src="{{ asset('frontend') }}/assets/images/Google-play.png" alt="Google Play Store"
                                         style="background: #fff; padding: 4px; border-radius: 2px;height: 36px;width: 55px;" />
                                 </a>
                             </li>

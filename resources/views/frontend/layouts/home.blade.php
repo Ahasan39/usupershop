@@ -3,20 +3,20 @@
     {{ config('app.name') }} | Best Online Shop In Bangladesh
 @endsection
 
-@section('meta_description', 'Welcome to ' . config('app.name') . ' - The best online shopping platform in Bangladesh. Buy groceries, electronics, fashion, and more at the best prices. Fast delivery and secure payment.')
+@section('meta_description', 'U Super Shop | Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা! সেরা ডিলে প্রিমিয়াম শপিং করুন অথবা সেলার ও ড্রপশিপার হয়ে ইনভেস্টমেন্ট ছাড়াই ব্যবসা শুরু করুন। দ্রুত ডেলিভারি ও বিশ্বস্ততার নিশ্চয়তা। আজই যোগ দিন | আনলিমিটেড রেফার বোনাসের সেরা প্ল্যাটফর্ম। এখনই ভিজিট করুন!')
 @section('meta_keywords', 'online shop, ecommerce, bangladesh, grocery, fashion, electronics, ' . config('app.name'))
 @section('meta_author', config('app.name'))
 
 @push('meta')
     <meta property="og:title" content="{{ config('app.name') }} | Best Online Shop In Bangladesh" />
-    <meta property="og:description" content="Welcome to {{ config('app.name') }} - The best online shopping platform in Bangladesh. Shop now for amazing deals!" />
+    <meta property="og:description" content="U Super Shop | Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা! সেরা ডিলে প্রিমিয়াম শপিং করুন অথবা সেলার ও ড্রপশিপার হয়ে ইনভেস্টমেন্ট ছাড়াই ব্যবসা শুরু করুন। আজই যোগ দিন | আনলিমিটেড রেফার বোনাসের সেরা প্ল্যাটফর্ম।" />
     <meta property="og:image" content="{{ asset('frontend/assets/images/banners/home-banner1212.jpg') }}" />
     <meta property="og:url" content="{{ url('/') }}" />
     <meta property="og:type" content="website" />
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ config('app.name') }} | Best Online Shop">
-    <meta name="twitter:description" content="Shop at {{ config('app.name') }} for the best products at unbeatable prices.">
+    <meta name="twitter:description" content="বেস্ট অনলাইন শপিং প্ল্যাটফর্ম। আপনার কেনাকাটা আর আয়ের সেরা ঠিকানা।">
     {{-- Organization Schema --}}
     <script type="application/ld+json">
     {
@@ -31,8 +31,11 @@
         "contactType": "customer service"
       },
       "sameAs": [
-        "https://www.facebook.com/yourpage",
-        "https://twitter.com/yourpage"
+        "https://www.facebook.com/share/1VjqK6xoDm/",
+        "https://youtube.com/@usupershop?feature=shared",
+        "https://www.instagram.com/usupershop?igsh=MXducXBidGE5NzRsNQ==",
+        "https://t.me/usupershop1",
+        "https://tiktok.com/@usupershop"
       ]
     }
     </script>
@@ -134,7 +137,7 @@
 @endsection
 @section('content')
     <div class="body-content" id="top-banner-and-menu">
-        <h1 class="sr-only" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">{{ config('app.name') }} - Best Online Shopping in Bangladesh</h1>
+        <h1 class="sr-only" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">U Super Shop - Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা!</h1>
         <div class="container">
             <div class="row home-banner-row">
                 <div class="col-xs-12 col-sm-12 col-md-8 sliderFixed">
@@ -163,7 +166,7 @@
                     <div class="left_advertisement">
                         <img 
                             src="{{ !empty($banners->banner_small_image_one) ? url('upload/banner/' . $banners->banner_small_image_one) : url('upload/slider_images/slider-2.png') }}"
-                            alt="" />
+                            alt="Banner Advertisement" />
                     </div>
                 </div>
             </div>
@@ -180,7 +183,7 @@
                         @foreach ($categories as $key => $category)
                             <div class="item category_area">
                                 <a href="{{ route('category.wise.product', $category->id) }}">
-                                    <img class="img-circle" src="{{ !empty($category->image) ? url('upload/category_images/' . $category->image) : url('frontend/no-image-icon.jpg') }}" alt="" />
+                                    <img class="img-circle" src="{{ !empty($category->image) ? url('upload/category_images/' . $category->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $category->name }}" />
                                     <h5 style="margin: 0px;">{{ substr($category->name, 0, 10) }}</h5>
                                 </a>
                             </div>
@@ -209,7 +212,7 @@
                                     <div class="image">
                                         <img style="width:100%; height:100px" class="img-responsive"
                                             src="{{ !empty($banners->category_banner_image) ? url('upload/banner/' . $banners->category_banner_image) : url('frontend/assets/images/banners/home-banner1212.jpg') }}"
-                                            alt="" />
+                                            alt="Category Offer Banner" />
                                     </div>
 
                                     <!-- /.new-label -->
