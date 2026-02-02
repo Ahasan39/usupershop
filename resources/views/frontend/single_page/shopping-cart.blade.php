@@ -521,7 +521,7 @@
                                                                     $loginUser->status == 1 &&
                                                                     $loginUser->code == null)
                                                                 <button class="btn btn-primary checkout-btn"
-                                                                    onclick="checkoutBtn();">Confirm To Order</button>
+                                                                    onclick="checkoutBtn();">Order Now</button>
                                                             @else
                                                                 <a href="{{ route('logout2') }}" class="btn btn-success"
                                                                     style="padding: 10px 15px;">Customer Login</a>
