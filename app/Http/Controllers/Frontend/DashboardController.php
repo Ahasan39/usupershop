@@ -161,7 +161,7 @@ class DashboardController extends Controller
             $order->coupon_discount = Session::get('coupon_discount', 0);
             $order->order_total = $request->order_total;
             $order->grand_total = $request->order_total + $del - Session::get('coupon_discount', 0);
-            $order->status = 'pending';
+            $order->status = ($request->payment_method == 'Cash on Delivery') ? 'pending' : 'initiated';
             $order->area_id = $this->getAreaID();
             $order->save();
 
@@ -220,7 +220,6 @@ class DashboardController extends Controller
             
             if ($request->payment_method == 'Bkash') {
                 $payment_url = $this->processBkashPayment($amount, $orderID);
-                $this->clearCartAndSession();
                 
                 if (isset($payment_url['status']) && $payment_url['status'] === true) {
                     return redirect($payment_url['url']);
@@ -348,7 +347,7 @@ class DashboardController extends Controller
                     $order->order_no = $order_no;
                     $order->coupon_discount = Session::get('coupon_discount', 0);
                     $order->order_total = $request->order_total;
-                    $order->status = 'pending';
+                    $order->status = ($request->payment_method == 'Bkash') ? 'initiated' : 'pending';
                     $order->save();
                     $orderID = $order->id;
                     $contents = Cart::content();
@@ -390,14 +389,25 @@ class DashboardController extends Controller
                 // Handle Payment Methods
                 if ($request->payment_method == 'Bkash') {
                     $payment_url = $this->processBkashPayment($request->order_total + $del - $coupon, $orderID);
+                    if ($payment_url['status'] == true) {
+                         return redirect($payment_url['url']);
+                    } else {
+                         // Cancel order if payment method failed
+                         $createdOrder = Order::find($orderID);
+                         if($createdOrder) {
+                             $createdOrder->status = 'canceled';
+                             $createdOrder->save();
+                         }
+                         return redirect()->route('product.list')->with('error', $payment_url['message'] ?? 'Payment initiation failed.');
+                    }
                 } else {
+                    $this->clearCartAndSession(); // For COD or others
                     $payment_url = $this->processBkashPayment($del, $orderID);
-                }
-                $this->clearCartAndSession();
-                if ($payment_url['status'] == true) {
-                    return redirect($payment_url['url']);
-                } else {
-                    return redirect()->route('product.list')->with('error', 'Something error!');
+                     if ($payment_url['status'] == true) {
+                         return redirect($payment_url['url']);
+                    } else {
+                        return redirect()->route('product.list')->with('error', 'Something error!');
+                    }
                 }
             } catch (\Exception $e) {
                 DB::rollback();
@@ -438,6 +448,7 @@ class DashboardController extends Controller
                 'amount' => $orderTotal,
                 'merchantInvoiceNumber' => $orderID . '-' . time(),
                 'token_id' => $grantToken['id_token'],
+                'callback_url' => route('bkash.callback'),
             ];
             // Create Payment Request
             $paymentCreate = $this->paymentCreate($data);
@@ -465,6 +476,7 @@ class DashboardController extends Controller
         $data['contact'] = Contact::first();
         $data['categories'] = Product::select('category_id')->groupBy('category_id')->get();
         $data['orders'] = Order::where('user_id', Auth::user()->id)
+            ->where('status', '!=', 'initiated')
             ->orderBy('id', 'DESC')
             ->get();
 
@@ -569,6 +581,7 @@ class DashboardController extends Controller
         $data['contact'] = Contact::first();
         $data['categories'] = Product::select('category_id')->groupBy('category_id')->get();
         $data['orders'] = Order::where('user_id', Auth::user()->id)
+            ->where('status', '!=', 'initiated')
             ->orderBy('id', 'DESC')
             ->get();
         return view('frontend.seller_shop.seller-customer-order', $data);

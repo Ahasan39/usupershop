@@ -7,64 +7,74 @@ use Illuminate\Http\Request;
 use App\Traits\BkashPaymentTrait;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Models\Order;
+use App\Models\Payment;
+use Illuminate\Support\Facades\Session;
 
 class BkashPaymentGatewayController extends Controller
 {
     use BkashPaymentTrait;
+
     public function BkashPaymentCreate(Request $request)
     {
-        $contents = Cart::content(); // Retrieve all items in the cart
-        // Generate a unique order number
-        $order_no = 'ORDER-' . time(); // Example: Use timestamp for a unique order ID
-    
-        foreach ($contents as $content) {
-            $order_details = new OrderDetail();
-            $order_details->order_id = $order_no; // Assign the order number
-            $order_details->product_id = $content->id; // Product ID
-            $order_details->color_id = $content->options->color_id; // Color (optional attribute)
-            $order_details->size_id = $content->options->size_id; // Size (optional attribute)
-            $order_details->quantity = $content->qty; // Quantity
-            $order_details->price = $content->price; // Price per unit
-            $order_details->subtotal = $content->subtotal; // Total price for this item
-            $order_details->shop_id = $content->options->shop_id; // Shop ID (from options)
-            $order_details->save(); // Save the order detail to the database
-        }
-    
-        // Clear the cart after processing the payment
-        Cart::destroy();
-    
+        // Placeholder or legacy method
         return response()->json(['success' => true, 'message' => 'Order processed successfully!']);
     }
-    public function processPayment()
+
+    public function callback(Request $request)
     {
-        $grantToken = $this->grantToken();
-         
-        if (isset($grantToken['id_token'])) {
-            $data = [
-                'amount' => 10,
-                'merchantInvoiceNumber' => '12-' . time(),
-                'token_id' => $grantToken['id_token'],
-            ];
+        $status = $request->input('status');
+        $paymentID = $request->input('paymentID');
 
-            $paymentCreate = $this->paymentCreate($data);
-
-            // if (isset($paymentCreate['paymentID'])) {
-            //     $paymentID = $paymentCreate['paymentID'];
-            //     $sessionToken = $grantToken['id_token'];
-
-            //     $paymentExecute = $this->paymentExecute($paymentID, $sessionToken);
-
-            //     if (isset($paymentExecute['statusCode']) && $paymentExecute['statusCode'] === '0000') {
-            //         $paymentStatus = $this->checkPayment($paymentID, $sessionToken);
-
-            //         return response()->json([
-            //             'message' => 'Payment successful',
-            //             'paymentStatus' => $paymentStatus,
-            //         ]);
-            //     }
-            // }
+        if ($status == 'cancel' || $status == 'failure') {
+            return redirect()->route('frontend.home')->with('error', 'Payment Cancelled or Failed');
         }
 
-        return response()->json(['error' => 'Payment process failed'],500);
+        if ($status == 'success') {
+            $grantToken = $this->grantToken();
+            
+            if (!isset($grantToken['id_token'])) {
+                return redirect()->route('frontend.home')->with('error', 'Token Generation Failed');
+            }
+
+            $execution = $this->paymentExecute($paymentID, $grantToken['id_token']);
+
+            if ($execution['status']) {
+                $merchantInvoiceNumber = $execution['data']['merchantInvoiceNumber'];
+                $order_id = explode('-', $merchantInvoiceNumber)[0];
+
+                $order = Order::find($order_id);
+                if ($order) {
+                    $order->payment_method = 'Bkash';
+                    $order->status = 'pending'; 
+                    $order->save();
+
+                    if ($order->payment_id) {
+                         $payment = Payment::find($order->payment_id);
+                         if ($payment) {
+                             $payment->payment_status = 'paid';
+                             $payment->transaction_id = $execution['data']['trxID'];
+                             $payment->save();
+                         }
+                    }
+                    
+                    Cart::destroy();
+                    Session::forget(['coupon_discount', 'shipping_id', 'delivery_charge', 'areaID']);
+
+                    return redirect()->route('customer.order.list')->with('success', 'Payment Successful! Transaction ID: ' . $execution['data']['trxID']);
+                } else {
+                     return redirect()->route('frontend.home')->with('error', 'Order not found after payment!');
+                }
+            } else {
+                 return redirect()->route('frontend.home')->with('error', $execution['message']);
+            }
+        }
+        
+        return redirect()->route('frontend.home')->with('error', 'Unknown Payment Status');
+    }
+
+    public function processPayment()
+    {
+        return response()->json(['error' => 'Use DashboardController flow'], 500);
     }
 }

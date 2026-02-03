@@ -47,9 +47,13 @@ trait BkashPaymentTrait
             ];
         }
 
-        $callback_url = env('BKASH_CALLBACK_URL');
-        if(isset($data['success_url'])){
-            $callback_url = env('BKASH_CALLBACK_URL') . $data['success_url'];
+        if (isset($data['callback_url'])) {
+            $callback_url = $data['callback_url'];
+        } else {
+            $callback_url = env('BKASH_CALLBACK_URL');
+            if(isset($data['success_url'])){
+                $callback_url = env('BKASH_CALLBACK_URL') . $data['success_url'];
+            }
         }
         $requestBody = [
             'mode' => '0011',

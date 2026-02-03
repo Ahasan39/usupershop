@@ -219,6 +219,7 @@ Route::get('login/facebook/callback', [LoginController::class, 'handleFacebookCa
 //Order Tracking
 Route::get('order/track/{id?}', [TrackingController::class, 'orderTrackNow'])->name('order.track');
 Route::post('order/invoice/track/submit', [TrackingController::class, 'orderTrackSubmit'])->name('order.tracksave');
+Route::get('/bkash/callback', [BkashPaymentGatewayController::class, 'callback'])->name('bkash.callback');
 //search product
 Route::get('/search-products', [SearchController::class, 'searchProduct'])->name('search.product');
 Route::post('/find-products', [SearchController::class, 'findProducts'])->name('find.product');
