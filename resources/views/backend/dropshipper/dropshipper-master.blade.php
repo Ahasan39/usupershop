@@ -191,6 +191,7 @@
             display: block;
         }
     </style>
+    @yield('custom_css')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

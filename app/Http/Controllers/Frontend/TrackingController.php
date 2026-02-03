@@ -25,15 +25,13 @@ class TrackingController extends Controller
     }
     public function orderTrackSubmit(Request $request)
     {
-        // Check if user is logged in
-        if (!auth()->check()) {
-            return redirect()->back()->with('error', 'Please log in to track your order.');
-        }
-        // Find the order by invoice number and load related users and shipping details
+        // Allow public tracking by Invoice Number (acting as a tracking ID)
+        $invoice_no = trim($request->invoice_no);
+        
         $order = Order::with(['users', 'shipping'])
-            ->where('invoice_no', $request->invoice_no)
-            ->where('user_id', auth()->id()) // Ensure the order belongs to the logged-in user
+            ->where('invoice_no', $invoice_no)
             ->first();
+            
         // Check if the order exists
         if ($order) {
             // Load order items and associated products
@@ -41,6 +39,7 @@ class TrackingController extends Controller
                 ->where('order_id', $order->id)
                 ->orderBy('id', 'DESC')
                 ->get();
+                
             // Display the order details view
             return view('frontend.order-track', compact('order', 'orderItems'));
         } else {

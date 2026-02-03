@@ -4,277 +4,149 @@
 
 @section('custom_css')
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap');
 
         .card {
-            position: relative;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            min-width: 0;
-            word-wrap: break-word;
+            border: 1px solid #ebebeb;
+            border-radius: 5px;
             background-color: #fff;
-            background-clip: border-box;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 0.10rem
-        }
-
-        .card-header:first-child {
-            border-radius: calc(0.37rem - 1px) calc(0.37rem - 1px) 0 0
+            margin-bottom: 30px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
         .card-header {
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 0;
-            background-color: #fff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+            background-color: #fcfcfc;
+            border-bottom: 1px solid #ebebeb;
+            padding: 15px 20px;
         }
 
-        .track {
+        .header-item {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .header-item strong {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .header-item span.highlight {
+            font-weight: 600;
+            color: #222;
+        }
+
+        /* Tracking Timeline */
+        .track-area {
+            padding: 50px 0;
             position: relative;
-            background-color: #ddd;
-            height: 4px;
+        }
+
+        .steps-wrapper {
             display: flex;
-            margin-bottom: 80px;
-            margin-top: 60px;
-            width: 100%;
-        }
-
-        .track .step {
-            flex: 1;
-            margin-top: -28px;
-            text-align: center;
+            justify-content: space-between;
             position: relative;
+            margin-bottom: 20px;
+            z-index: 2;
         }
 
-        .track .step.active:before {
-            background: #59b210;
-        }
-
-        .track .step::before {
-            height: 4px;
-            position: absolute;
-            content: "";
+        .step-item {
+            position: relative;
+            text-align: center;
             width: 100%;
-            left: 0;
-            top: 28px;
+            z-index: 2;
         }
 
-        .track .step.active .icon {
-            background: #59b210;
+        .step-icon-box {
+            width: 50px;
+            height: 50px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #fff;
-        }
-
-        /* cancel area start */
-        .track .cancel {
-            -webkit-box-flex: 1;
-            -ms-flex-positive: 1;
-            flex-grow: 1;
-            width: 25%;
-            margin-top: -18px;
-            text-align: center;
-            position: relative
-        }
-
-        .track .cancel.done:before {
-            background: #EA323D;
-        }
-
-        .track .cancel::before {
-            height: 7px;
-            position: absolute;
-            content: "";
-            width: 100%;
-            left: 0;
-            top: 18px
-        }
-
-        .track .cancel.done .icon {
-            background: #EA323D;
-            color: #fff
-        }
-
-        .track .icon {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
+            font-size: 20px;
+            border: 4px solid #fff; /* whitespace around circle */
             position: relative;
-            border-radius: 100%;
-            background: #ddd;
+            z-index: 3;
+            transition: all 0.3s ease;
         }
 
-        .track .cancel.done .text {
-            font-weight: 400;
-            color: #000
+        .step-item.active .step-icon-box {
+            background: #6bbd23; /* Bright green from screenshot */
+            box-shadow: 0 0 0 4px #e8f5e9; /* Light green ring */
         }
-
-        /* end cancel area  */
-
-        .track .icon {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            position: relative;
-            border-radius: 100%;
-            background: #ddd;
-        }
-
-        .track .step.active .text {
-            font-weight: 400;
-            color: #000
-        }
-
-        .track .text {
-            display: block;
-            margin-top: 7px
-        }
-
-        .itemside {
-            position: relative;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            width: 100%
-        }
-
-        .itemside .aside {
-            position: relative;
-            -ms-flex-negative: 0;
-            flex-shrink: 0;
-            width: 80px !important;
-            height: 80px !important;
-            overflow: hidden;
-            border-radius: 5px;
-        }
-
-        .itemside .aside img {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 80px !important;
-            max-height: 80px !important;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        .img-sm {
-            width: 80px;
-            height: 80px;
-            padding: 7px
-        }
-
-        ul.row,
-        ul.row-sm {
-            list-style: none;
-            padding: 0
-        }
-
-        .itemside .info {
-            padding-left: 15px;
-            padding-right: 7px
-        }
-
-        .itemside .title {
-            display: block;
-            margin-bottom: 5px;
-            color: #212529
-        }
-
-        p {
-            margin-top: 0;
-            margin-bottom: 1rem
-        }
-
-        .btn-warning {
-            color: #ffffff;
-            background-color: #59b210;
-            border-color: #59b210;
-            border-radius: 1px
-        }
-
-        .btn-warning:hover {
-            color: #ffffff;
-            background-color: #59b210;
-            border-color: #59b210;
-            border-radius: 1px
-        }
-
-        .qty {
-            background: #59b210;
-        }
-
-        .mt {
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-
-        .empty {
-            padding: 20px;
-        }
-
-        /* Base styles for all screen sizes */
-        .container,
-        .row,
-        .card,
-        .card-body,
-        .track,
-        ul.row,
-        li.col {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Ensure images scale appropriately */
-        .itemside img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
         
-        /* Responsive for mobile */
+        .step-item.completed .step-icon-box {
+            background: #6bbd23;
+        }
+
+        .step-text {
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+         
+        /* The Gray Line */
+        .track-line-bg {
+            position: absolute;
+            top: 25px; /* Center of 50px circle is 25px */
+            left: 8%; /* Start slightly in */
+            width: 84%; /* End slightly in */
+            height: 6px;
+            background: #e0e0e0;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        /* The Green Line (Progress) */
+        .track-line-progress {
+            position: absolute;
+            top: 25px;
+            left: 8%;
+            height: 6px;
+            background: #6bbd23;
+            z-index: 1;
+            transform: translateY(-50%);
+            transition: width 0.5s ease;
+        }
+
+        /* Responsive */
         @media screen and (max-width: 768px) {
-            .track {
+            .steps-wrapper {
                 flex-direction: column;
-                width: 88%;
+                align-items: flex-start;
+                padding-left: 20px;
+            }
+            .step-item {
+                display: flex;
                 align-items: center;
+                margin-bottom: 30px;
+                text-align: left;
+                width: auto;
             }
-
-            .step {
-                width: 88%;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: center;
+            .step-text {
+                margin-top: 0;
+                margin-left: 20px;
             }
-
-            .step .icon {
-                margin-right: 8px;
-                margin-bottom: 0;
+            .track-line-bg, .track-line-progress {
+                left: 45px;
+                top: 25px;
+                width: 6px;
+                height: 100%; /* Cover height */
+                transform: none;
             }
-
-            .step .text {
-                font-size: 14px;
-            }
-
-            .step small {
-                font-size: 11px;
-            }
-
-            .step::after {
-                display: none;
-            }
-
-            .track .step {
-                width: 20%;
-                margin-top: -18px;
-                text-align: center;
-                position: relative
-            }
+             .track-line-bg {
+                 height: 90%; /* Approximate vertical length */
+             }
+             .track-line-progress {
+                 height: 0; /* JS or style to control vertical height */
+                 width: 6px;
+             }
         }
     </style>
 @endsection
@@ -304,211 +176,101 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-md-2">
-                                        <strong>Invoice No:</strong> <br> {{ $order->invoice_no }}
+                                    <div class="col-md-3">
+                                        <div class="header-item">
+                                            <strong>Invoice No:</strong> <br>
+                                            <span class="highlight">{{ $order->invoice_no }}</span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <strong>Order Date:</strong> <br>{{ $order->created_at }}
+                                    <div class="col-md-3">
+                                        <div class="header-item">
+                                            <strong>Order Date:</strong> <br>
+                                            {{ $order->created_at->format('Y-m-d H:i:s') }}
+                                        </div>
                                     </div>
-                                    <div class="col-md-5">
-                                        <strong>Shipping By: {{ $order->shipping->name }}</strong><br>
-                                        {{ $order->shipping->address }} | <i class="fa fa-phone"></i> {{ $order->shipping->mobile }}
+                                    <div class="col-md-4">
+                                        <div class="header-item">
+                                            <strong>Shipping By: <span style="font-size:14px; font-weight:700; color:#333;">{{ $order->shipping->name }}</span></strong> <br>
+                                            {{ $order->shipping->address }} | <i class="fa fa-phone"></i> {{ $order->shipping->mobile }}
+                                        </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <strong>Status:</strong> <br> {{ ucfirst($order->status) }}
-                                    </div>
-                                    <div class="col-md-1">
-                                        <strong>Total:</strong> <br>৳ {{ $order->order_total }}
+                                    <div class="col-md-2 text-md-right text-left">
+                                        <div class="header-item">
+                                            <strong>Status:</strong> <br>
+                                            {{ ucfirst($order->status) }} 
+                                            <br>
+                                            <strong>Total:</strong> <span style="color: #333; font-weight:700;">৳ {{ number_format($order->order_total, 2) }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="track">
-                                    @if ($order->status === 'pending')
-                                        <div class="step active">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->created_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
-                                        </div>
-                                    @elseif ($order->status === 'confirmed')
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->created_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step active">
-                                            <span class="icon"> <i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->updated_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
-                                        </div>
-                                    @elseif ($order->status === 'packaging')
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="step active">
-                                            <span class="icon"><i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->updated_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
-                                        </div>
-                                    @elseif ($order->status === 'shipment')
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"><i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="step active">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->updated_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
-                                        </div>
-                                    @elseif ($order->status === 'delivered')
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"><i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"><i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="step active">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                            <small class="text-danger">{{ Carbon\Carbon::parse($order->updated_at)->format('d F Y') }}</small>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
-                                        </div>
-                                    @elseif ($order->status === 'canceled' || $order->status === 'return')
-                                        <div class="cancel done">
-                                            <span class="icon"> <i class="fa fa-close"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                        </div>
-                                        <div class="cancel done">
-                                            <span class="icon"><i class="fa fa-close"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="cancel done">
-                                            <span class="icon"> <i class="fa fa-close"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="cancel done">
-                                            <span class="icon"> <i class="fa fa-close"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="cancel done">
-                                            <span class="icon"><i class="fa fa-close"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="cancel done">
-                                            <span class="icon"> <i class="fa fa-close"></i></span>
-                                            <span class="text">{{ ucfirst($order->status) }}</span>
+                                @php
+                                    $statusMap = [
+                                        'pending' => 0,
+                                        'confirmed' => 1,
+                                        'packaging' => 2,
+                                        'shipment' => 3,
+                                        'delivered' => 4,
+                                        'return' => 5
+                                    ];
+                                    
+                                    $currentStep = 0;
+                                    if(array_key_exists($order->status, $statusMap)) {
+                                        $currentStep = $statusMap[$order->status];
+                                    }
+                                    
+                                    $percentage = $currentStep * 20; 
+                                    
+                                    $isReturn = ($order->status == 'return');
+                                    $isCanceled = ($order->status == 'canceled');
+                                    
+                                    if($isReturn) {
+                                        $currentStep = 5;
+                                        $percentage = 100;
+                                    }
+
+                                    $steps = [
+                                        ['label' => 'Order Pending', 'icon' => 'fa-spinner'],
+                                        ['label' => 'Order Confirmed', 'icon' => 'fa-shopping-cart'],
+                                        ['label' => 'Packaging Order', 'icon' => 'fa-gift'],
+                                        ['label' => 'Order Shipment', 'icon' => 'fa-truck'],
+                                        ['label' => 'Delivered Order', 'icon' => 'fa-user'],
+                                        ['label' => 'Return Order', 'icon' => 'fa-undo']
+                                    ];
+                                @endphp
+
+                                <div class="track-area">
+                                    @if($isCanceled)
+                                        <div class="alert alert-danger text-center">
+                                            <i class="fa fa-times-circle"></i> This order has been canceled.
                                         </div>
                                     @else
-                                        <div class="step active">
-                                            <span class="icon"> <i class="fa fa-spinner"></i> </span>
-                                            <span class="text">Order Pending</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-shopping-cart"></i> </span>
-                                            <span class="text">Order Confirmed</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-box"></i> </span>
-                                            <span class="text">Packaging Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-truck"></i> </span>
-                                            <span class="text">Order Shipment</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-user"></i> </span>
-                                            <span class="text">Delivered Order</span>
-                                        </div>
-                                        <div class="step">
-                                            <span class="icon"> <i class="fa fa-undo"></i> </span>
-                                            <span class="text">Return Order</span>
+                                        <div class="track-line-bg"></div>
+                                        <div class="track-line-progress" style="width: {{ $percentage }}%;"></div>
+                                        
+                                        <div class="steps-wrapper">
+                                            @foreach($steps as $index => $step)
+                                                @php
+                                                    $isActive = $index == $currentStep;
+                                                    $isCompleted = $index < $currentStep;
+                                                    $statusClass = '';
+                                                    if($isActive) $statusClass = 'active';
+                                                    elseif($isCompleted) $statusClass = 'completed';
+                                                @endphp
+                                                <div class="step-item {{ $statusClass }}">
+                                                    <div class="step-icon-box">
+                                                        <i class="fa {{ $step['icon'] }}"></i>
+                                                    </div>
+                                                    <div class="step-text">{{ $step['label'] }}</div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     @endif
                                 </div>
+
                                 <div class="mt-4">
-                                    <a href="{{ route('dropshipper.orders.pending.list') }}" class="btn btn-secondary">
+                                    <a href="{{ route('dropshipper.orders.pending.list') }}" class="btn" style="background: #6c757d; color: #fff; border-radius: 4px;">
                                         <i class="fa fa-arrow-left"></i> Back to Orders
                                     </a>
                                 </div>
