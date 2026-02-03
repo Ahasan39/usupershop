@@ -44,6 +44,17 @@ class BkashPaymentGatewayController extends Controller
                     auth()->loginUsingId($order->user_id);
                 }
             }
+
+            // After re-login (or if session was alive), redirect to their respective dashboard
+            if (auth()->check()) {
+                $user = auth()->user();
+                if ($user->usertype === 'customer') {
+                    return redirect()->route('dashboard')->with('error', 'Payment Cancelled or Failed');
+                } elseif (in_array($user->usertype, ['seller', 'dropshipper', 'vendor'])) {
+                    return redirect()->route('seller.dashboard')->with('error', 'Payment Cancelled or Failed');
+                }
+            }
+
             return redirect('/')->with('error', 'Payment Cancelled or Failed');
         }
 
