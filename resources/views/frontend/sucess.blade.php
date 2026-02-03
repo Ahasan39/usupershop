@@ -62,7 +62,7 @@
                       window.location.href = "{{ route('seller.dashboard') }}";
                     @endif
                   @else
-                    window.location.href = "{{ route('kafi') }}";
+                    window.location.href = "{{ route('dashboard') }}";
                   @endif
                 }
             }, 1000);

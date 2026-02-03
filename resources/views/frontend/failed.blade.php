@@ -41,8 +41,8 @@
             <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
               <i class="crossmark">❌</i>
             </div>
-            <h1>Failed</h1> 
-            <p>Your  request is failed;</p>
+            <h1>Payment Failed</h1> 
+            <p>Your payment has failed. Please try again or contact support.</p>
             <p>Redirecting in <span id="countdown">3</span> seconds...</p>
         </div>
     
@@ -56,13 +56,13 @@
                     clearInterval(countdown);
                     @if ($returnData['payment_type'] != NULL)
                       @if ($returnData['payment_type'] === 'customer_order')
-                        window.location.href = "{{ route('customer.order.list') }}";
+                        window.location.href = "{{ route('dashboard') }}";
                       @endif
                       @if ($returnData['payment_type'] === 'user_subscription')
                         window.location.href = "{{ route('seller.dashboard') }}";
                       @endif
                     @else
-                      window.location.href = "{{ route('kafi') }}";
+                      window.location.href = "{{ route('dashboard') }}";
                     @endif
                 }
             }, 1000);

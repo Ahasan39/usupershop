@@ -45,7 +45,7 @@ class BkashPaymentGatewayController extends Controller
                 }
             }
 
-            // After re-login (or if session was alive), redirect to their respective dashboard
+            // After re-login (or if session was alive), redirect to their dashboard
             if (auth()->check()) {
                 $user = auth()->user();
                 if ($user->usertype === 'customer') {
@@ -55,7 +55,7 @@ class BkashPaymentGatewayController extends Controller
                 }
             }
 
-            return redirect('/')->with('error', 'Payment Cancelled or Failed');
+            return redirect()->route('dashboard')->with('error', 'Payment Cancelled or Failed');
         }
 
         if ($status == 'success') {
