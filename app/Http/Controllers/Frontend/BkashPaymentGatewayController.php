@@ -26,17 +26,28 @@ class BkashPaymentGatewayController extends Controller
         $status = $request->input('status');
         $paymentID = $request->input('paymentID');
 
+        // Grant token is needed for almost everything
+        $grantToken = $this->grantToken();
+        if (!isset($grantToken['id_token'])) {
+            return redirect()->route('frontend.home')->with('error', 'Token Generation Failed');
+        }
+
         if ($status == 'cancel' || $status == 'failure') {
-            return redirect()->route('frontend.home')->with('error', 'Payment Cancelled or Failed');
+            // Try to find the order to log the user back in (session loss fix)
+            $check = $this->checkPayment($paymentID, $grantToken['id_token']);
+            $merchantInvoiceNumber = $check['data']['merchantInvoiceNumber'] ?? ($check['data']['merchantInvoice'] ?? null);
+            
+            if ($merchantInvoiceNumber) {
+                $order_id = explode('-', $merchantInvoiceNumber)[0];
+                $order = Order::find($order_id);
+                if ($order && !auth()->check()) {
+                    auth()->loginUsingId($order->user_id);
+                }
+            }
+            return redirect('/')->with('error', 'Payment Cancelled or Failed');
         }
 
         if ($status == 'success') {
-            $grantToken = $this->grantToken();
-            
-            if (!isset($grantToken['id_token'])) {
-                return redirect()->route('frontend.home')->with('error', 'Token Generation Failed');
-            }
-
             $execution = $this->paymentExecute($paymentID, $grantToken['id_token']);
 
             if ($execution['status']) {
@@ -45,6 +56,11 @@ class BkashPaymentGatewayController extends Controller
 
                 $order = Order::find($order_id);
                 if ($order) {
+                    // Log user back in if lost
+                    if (!auth()->check()) {
+                        auth()->loginUsingId($order->user_id);
+                    }
+
                     $order->payment_method = 'Bkash';
                     $order->status = 'pending'; 
                     $order->save();
@@ -61,16 +77,20 @@ class BkashPaymentGatewayController extends Controller
                     Cart::destroy();
                     Session::forget(['coupon_discount', 'shipping_id', 'delivery_charge', 'areaID']);
 
+                    if (auth()->user() && (auth()->user()->usertype == 'seller' || auth()->user()->usertype == 'dropshipper')) {
+                        return redirect()->route('seller.customer.order.list')->with('success', 'Payment Successful! Transaction ID: ' . $execution['data']['trxID']);
+                    }
+
                     return redirect()->route('customer.order.list')->with('success', 'Payment Successful! Transaction ID: ' . $execution['data']['trxID']);
                 } else {
-                     return redirect()->route('frontend.home')->with('error', 'Order not found after payment!');
+                     return redirect('/')->with('error', 'Order not found after payment!');
                 }
             } else {
-                 return redirect()->route('frontend.home')->with('error', $execution['message']);
+                 return redirect('/')->with('error', $execution['message']);
             }
         }
         
-        return redirect()->route('frontend.home')->with('error', 'Unknown Payment Status');
+        return redirect('/')->with('error', 'Unknown Payment Status');
     }
 
     public function processPayment()
