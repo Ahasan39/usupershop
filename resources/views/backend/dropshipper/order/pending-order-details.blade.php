@@ -43,99 +43,116 @@
                                 </h5>
                             </div>
                             <!-- /.card-header -->
+                            @php
+                                $footercontent = Helper::getfootercontacts();
+                            @endphp
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="text-center myTable" border="1" width="100%">
-                                        <tr>
-                                            <td width="30%">
-                                                <img src="{{ asset('upload/logo_image/usupershop.jpeg' ) }}"
-                                                    alt="{{ $logo->name }}">
-                                            </td>
-                                            <td width="40%">
-                                                <h4><strong>U Super Shop</strong></h4>
-                                                <span><strong>Whatsapp No : </strong> 01894448136</span><br>
-                                                <span><strong>Email : </strong> examplr@gmail.com</span><br>
-                                                <span>Dhaka, Bangladesh</span>
-                                            </td>
-                                            <td width="30%">
-                                                <?php if(!empty($order->shop_id)){?>
-                                                <strong>Shop ID : {{ $order->shop_id }}</strong> </br>
-                                                <?php } ?>
-                                                <strong>Order No : ODR-#{{ $order->order_no }}</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Billing/Shipping Info :</strong></td>
-                                            <td colspan="2">
-                                                <strong>Name : </strong> {{ $order['shipping']['name'] }}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong>Mobile No : </strong> {{ $order['shipping']['mobile'] }}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong>Email : </strong> {{ $order['shipping']['email'] }}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong>Address : </strong> {{ $order['shipping']['address'] }}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                                <strong>Payment : </strong>
-                                                {{ $order['payment']['payment_method'] }}
-                                                @if ($order['payment']['payment_method'] == 'Bkash')
-                                                    [ Transaction ID : {{ $order['payment']['transaction_no'] }} ]
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3"><strong>Order Details</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Product name & Image</strong></td>
-                                            <td><strong>Color & Size</strong></td>
-                                            <td><strong>Quantity & Price</strong></td>
-                                        </tr>
-                                        @foreach ($order['order_details'] as $details)
-                                            <tr>
-                                                <td style="text-align: left;">
-                                                    <img style="width: 50px;height:30px; border: 1px solid #000;background: #fff;padding: 3px;margin: 3px;"
-                                                        src="{{ url('upload/product_images/' . $details['product']['image']) }}">
-                                                    &nbsp;
-                                                    {{ $details['product']['name'] }}
-                                                </td>
-                                                <td>
-                                                    {{ $details->color_name ?? 'N/A' }} &
-                                                    {{ $details->size_name ?? 'N/A' }}
-                                                </td>
-                                                <td>
-                                                    @php
-                                                        $sub_total = $details->quantity * $details->sell_price;
-                                                    @endphp
-                                                    {{ $details->quantity }} X {{ $details->sell_price }} =
-                                                    {{ $sub_total }} Tk.
-
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td colspan="2" style="text-align: right;"><strong>Sub Total : </strong></td>
-                                            <td><strong>{{ $order->order_total }} Tk.</strong></td>
-                                        </tr>
-                                        @if ($order->coupon_discount != null)
-                                            <tr>
-                                                <td colspan="2" style="text-align: right;">Coupon Discount : </td>
-                                                <td>{{ $order->coupon_discount }} Tk.</td>
-                                            </tr>
-                                        @endif
-                                        <tr>
-                                            <td colspan="2" style="text-align: right;">Delivery Charge : </td>
-                                            <td>{{ $order['delivery_charge'] }} Tk.</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" style="text-align: right;"><strong>Grand Total : </strong>
-                                            </td>
-                                            <td><strong>{{ round($order->order_total - $order->coupon_discount + $order->delivery_charge) }}
-                                                    Tk.</strong></td>
-                                        </tr>
-                                    </table>
-                                </div>
-
+                                <table class="text-center myTable" border="1" width="100%">
+                                    <tr>
+                                        <td width="30%">
+                                            <img src="{{ asset('frontend/assets/images/12345.png') }}" 
+                                            style="color:blue;width:100%;max-width:220px;"
+                                                alt="{{ $logo->name ?? '' }}">
+                                        </td>
+                                        <td width="40%">
+                                            <h4><strong>U Super Shop</strong></h4>
+                                            <span><strong>Mobile No : </strong>{{ $footercontent->mobile ?? ''}}</span><br>
+                                            <span><strong>Email : </strong> {{ $footercontent->email ?? '' }}</span><br>
+                                            <span>{{ $footercontent->address ?? ''  }}</span>
+                                        </td>
+                                        <td width="30%">
+                                            <?php if(!empty($order->shop_id)){?>
+                                            <strong>Shop ID : {{ $order->shop_id }}</strong> </br>
+                                            <?php } ?>
+                                            <strong>Order No : ODR-#{{ $order->order_no }}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Billing/Shipping Info :</strong></td>
+                                        <td colspan="2">
+                                            <strong>Name : </strong> {{ $order['shipping']['name'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Mobile No : </strong> {{ $order['shipping']['mobile'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Email : </strong> {{ $order['shipping']['email'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Address : </strong> {{ $order['shipping']['address'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Payment Method : </strong>
+                                            {{ $order['payment']['payment_method'] }}
+                                           
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"><strong>Order Details</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Product name & Image</strong></td>
+                                        <td><strong>Color & Size</strong></td>
+                                        <td><strong>Quantity & Price</strong></td>
+                                    </tr>
+                                    @php
+                                    $subtotal = 0;
+                                @endphp
+                                
+                                @foreach ($order->order_details as $details)
+                                    <tr>
+                                        <td style="text-align: left;">
+                                            @if ($details->product)
+                                                <img style="width: 50px;height:30px; border: 1px solid #000;background: #fff;padding: 3px;margin: 3px;"
+                                                    src="{{ url('upload/product_images/' . $details->product->image) }}" alt="Product Image">
+                                                &nbsp;
+                                                {{ $details->product->name }}
+                                            @else
+                                                No product information available
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{ $details->color_name ?? 'N/A' }} & {{ $details->size_name ?? 'N/A' }}
+                                        </td>
+                                        <td>
+                                            @if ($details->product)
+                                                @php
+                                                    $item_price = $details->sell_price;
+                                                    $item_total = $details->quantity * $item_price;
+                                                    $subtotal += $item_total;
+                                                @endphp
+                                                {{ $details->quantity }} X {{ $item_price }} = {{ $item_total }} Tk.
+                                            @else
+                                                0 Tk.
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Sub Total : </strong></td>
+                                    <td><strong>{{ $subtotal }} Tk.</strong></td>
+                                </tr>
+                                
+                                @if ($order->coupon_discount != null)
+                                    <tr>
+                                        <td colspan="2" style="text-align: right;">Coupon Discount : </td>
+                                        <td>{{ $order->coupon_discount }} Tk.</td>
+                                    </tr>
+                                @endif
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;">Delivery Charge : </td>
+                                    <td>{{ $order->delivery_charge }} Tk.</td>
+                                </tr>
+                                
+                                @php
+                                    $grandTotal = round($subtotal - ($order->coupon_discount ?? 0) + $order->delivery_charge);
+                                @endphp
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Grand Total : </strong></td>
+                                    <td><strong>{{ $grandTotal }} Tk.</strong></td>
+                                </tr>
+                                
+                                </table>
+                                
                                 <a style="margin-right: 5px;" id="print" class="btn btn-sm btn-info float-right mt-3"
                                     href="{{ route('dropshipper.orders.print', $order->id) }}"><i class="fas fa-print"></i>
                                     Print</a>

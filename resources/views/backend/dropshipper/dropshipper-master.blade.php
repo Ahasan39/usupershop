@@ -58,6 +58,12 @@
         .bottom-nav .nav-link.active i {
             transform: scale(1.15);
         }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding-bottom: 70px;
+            }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -306,7 +312,7 @@
             </script>
         @endif
         <!-- Mobile-only Bottom Tab Menu - Horizontal Side-by-Side with 5 Tabs -->
-        <nav class="navbar fixed-bottom navbar-light bg-white border-top shadow-sm"
+        <nav class="navbar fixed-bottom navbar-light bg-white border-top shadow-sm d-block d-md-none bottom-nav"
             style="height: 64px; z-index: 1030;"> <!-- slightly taller for better touch target -->
             <div class="container-fluid px-0">
                 <ul class="nav nav-pills w-100 d-flex justify-content-around align-items-center" role="tablist">
@@ -357,7 +363,7 @@
                 </ul>
             </div>
         </nav>
-        <footer class="main-footer">
+        <footer class="main-footer d-none d-md-block">
             <strong>Copyright &copy;
                 <a href="{{ route('frontend.home') }}">U Super Shop</a>.</strong>
             <div class="float-right d-none d-sm-inline-block">

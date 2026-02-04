@@ -39,146 +39,112 @@
                                 </a>
                             </div>
 
-                            <div class="card-body p-0">
-                                <!-- Invoice Container -->
-                                <div class="invoice p-4 p-md-5 bg-white">
-                                    <!-- Header -->
-                                    <div class="row mb-5">
-                                        <div class="col-md-4 text-center text-md-left">
-                                            <img src="{{ asset('frontend/assets/images/12345.png') }}" alt="Company Logo"
-                                                class="img-fluid" style="max-height: 130px;">
-                                        </div>
-                                        <div class="col-md-4 text-center">
-                                            <h2 class="font-weight-bold mb-2">U Super Shop</h2>
-                                            <p class="mb-0">
-                                                <strong>Whatsapp:</strong> {{ $footercontent->mobile ?? 'N/A' }}<br>
-                                                <strong>Email:</strong> {{ $footercontent->email ?? 'N/A' }}<br>
-                                                <strong>Address:</strong> {{ $footercontent->address ?? 'N/A' }}
-                                            </p>
-                                        </div>
-                                        <div class="col-md-4 text-center text-md-right">
-                                            @if (!empty($order->shop_id))
-                                                <p class="mb-1"><strong>Shop ID:</strong> {{ $order->shop_id }}</p>
+                            <div class="card-body">
+                                <table class="text-center myTable" border="1" width="100%">
+                                    <tr>
+                                        <td width="30%">
+                                            <img src="{{ asset('frontend/assets/images/12345.png') }}" 
+                                            style="color:blue;width:100%;max-width:220px;"
+                                                alt="{{ $logo->name ?? '' }}">
+                                        </td>
+                                        <td width="40%">
+                                            <h4><strong>U Super Shop</strong></h4>
+                                            <span><strong>Mobile No : </strong>{{ $footercontent->mobile ?? ''}}</span><br>
+                                            <span><strong>Email : </strong> {{ $footercontent->email ?? '' }}</span><br>
+                                            <span>{{ $footercontent->address ?? ''  }}</span>
+                                        </td>
+                                        <td width="30%">
+                                            <?php if(!empty($order->shop_id)){?>
+                                            <strong>Shop ID : {{ $order->shop_id }}</strong> </br>
+                                            <?php } ?>
+                                            <strong>Order No : ODR-#{{ $order->order_no }}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Billing/Shipping Info :</strong></td>
+                                        <td colspan="2">
+                                            <strong>Name : </strong> {{ $order['shipping']['name'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Mobile No : </strong> {{ $order['shipping']['mobile'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Email : </strong> {{ $order['shipping']['email'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Address : </strong> {{ $order['shipping']['address'] }}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Payment Method : </strong>
+                                            {{ $order['payment']['payment_method'] }}
+                                           
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"><strong>Order Details</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Product name & Image</strong></td>
+                                        <td><strong>Color & Size</strong></td>
+                                        <td><strong>Quantity & Price</strong></td>
+                                    </tr>
+                                    @php
+                                    $subtotal = 0;
+                                @endphp
+                                
+                                @foreach ($order->order_details as $details)
+                                    <tr>
+                                        <td style="text-align: left;">
+                                            @if ($details->product)
+                                                <img style="width: 50px;height:30px; border: 1px solid #000;background: #fff;padding: 3px;margin: 3px;"
+                                                    src="{{ url('upload/product_images/' . $details->product->image) }}" alt="Product Image">
+                                                &nbsp;
+                                                {{ $details->product->name }}
+                                            @else
+                                                No product information available
                                             @endif
-                                            <h4 class="mb-1"><strong>Order No:</strong> ODR-#{{ $order->order_no }}</h4>
-                                            <p class="mb-0"><strong>Status:</strong> <span
-                                                    class="badge badge-success">Delivered</span></p>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-5">
-
-                                    <!-- Customer Information -->
-                                    <div class="row mb-5">
-                                        <div class="col-md-6">
-                                            <h5 class="font-weight-bold mb-3">Billing / Shipping Address</h5>
-                                            <p class="mb-1">
-                                                <strong>Name:</strong> {{ $order['shipping']['name'] ?? 'N/A' }}<br>
-                                                <strong>Mobile:</strong> {{ $order['shipping']['mobile'] ?? 'N/A' }}<br>
-                                                <strong>Email:</strong> {{ $order['shipping']['email'] ?? 'N/A' }}<br>
-                                                <strong>Address:</strong> {{ $order['shipping']['address'] ?? 'N/A' }}<br>
-                                                <strong>Payment Method:</strong>
-                                                {{ $order['payment']['payment_method'] ?? 'N/A' }}
-                                                @if ($order['payment']['payment_method'] == 'Bkash')
-                                                    <br><strong>Transaction ID:</strong>
-                                                    {{ $order['payment']['transaction_no'] ?? 'N/A' }}
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Order Items Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="text-center" style="width: 50px; min-width: 50px;">#</th>
-                                                    <th style="min-width: 200px;">Product</th>
-                                                    <th class="text-center" style="width: 120px; min-width: 120px;">Image
-                                                    </th>
-                                                    <th class="text-center" style="min-width: 120px;">Color / Size</th>
-                                                    <th class="text-center" style="width: 70px; min-width: 70px;">Qty</th>
-                                                    <th class="text-center" style="width: 120px; min-width: 120px;">Unit
-                                                        Price<br>(Tk.)</th>
-                                                    <th class="text-center" style="width: 130px; min-width: 130px;">
-                                                        Total<br>(Tk.)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($order['order_details'] as $index => $details)
-                                                    @php
-                                                        $sub_total = $details->quantity * $details->sell_price;
-                                                    @endphp
-                                                    <tr>
-                                                        <td  style="width: 50px; min-width: 50px;">{{ $loop->iteration }}</td>
-                                                        <td  style="min-width: 200px;">{{ $details['product']['name'] }}</td>
-                                                        <td class="text-center"  style="width: 120px; min-width: 120px;">
-                                                            <img src="{{ url('upload/product_images/' . $details['product']['image']) }}"
-                                                                alt="Product" class="img-thumbnail"
-                                                                style="max-width: 90px; max-height: 70px;">
-                                                        </td>
-                                                        <td class="text-center"  style="min-width: 120px;">
-                                                            {{ $details->color_name ?? 'N/A' }} /
-                                                            {{ $details->size_name ?? 'N/A' }}
-                                                        </td>
-                                                        <td class="text-center" style="width: 70px; min-width: 70px;">{{ $details->quantity }}</td>
-                                                        <td class="text-right"  style="width: 120px; min-width: 120px;">{{ number_format($details->sell_price, 2) }}
-                                                        </td>
-                                                        <td class="text-right" style="width: 130px; min-width: 130px;">{{ number_format($sub_total, 2) }}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot class="font-weight-bold bg-light">
-                                                <tr>
-                                                    <td colspan="6" class="text-right">Subtotal:</td>
-                                                    <td class="text-right">{{ number_format($order->order_total, 2) }} Tk.
-                                                    </td>
-                                                </tr>
-                                                @if ($order->coupon_discount > 0)
-                                                    <tr>
-                                                        <td colspan="6" class="text-right">Coupon Discount:</td>
-                                                        <td class="text-right">-
-                                                            {{ number_format($order->coupon_discount, 2) }} Tk.</td>
-                                                    </tr>
-                                                @endif
-                                                <tr>
-                                                    <td colspan="6" class="text-right">Delivery Charge:</td>
-                                                    <td class="text-right">
-                                                        {{ number_format($order->delivery_charge ?? 0, 2) }} Tk.</td>
-                                                </tr>
+                                        </td>
+                                        <td>
+                                            {{ $details->color_name ?? 'N/A' }} & {{ $details->size_name ?? 'N/A' }}
+                                        </td>
+                                        <td>
+                                            @if ($details->product)
                                                 @php
-                                                    $grand_total = round(
-                                                        $order->order_total -
-                                                            ($order->coupon_discount ?? 0) +
-                                                            ($order->delivery_charge ?? 0),
-                                                    );
+                                                    $item_price = $details->sell_price;
+                                                    $item_total = $details->quantity * $item_price;
+                                                    $subtotal += $item_total;
                                                 @endphp
-                                                <tr class="bg-success text-white">
-                                                    <td colspan="6" class="text-right">
-                                                        <h5 class="mb-0">Grand Total:</h5>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <h5 class="mb-0">{{ number_format($grand_total, 2) }} Tk.</h5>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-
-                                    <!-- Thank you note -->
-                                    <div class="row mt-5">
-                                        <div class="col-12 text-center text-muted">
-                                            <p class="mb-0">Thank you for selling with U Super Shop!</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Print Button (Hidden on Print) -->
-                                <div class="px-4 pb-4 no-print">
-                                    <button onclick="window.print()" class="btn btn-info btn-sm float-right">
-                                        <i class="fas fa-print"></i> Print Invoice
-                                    </button>
-                                </div>
+                                                {{ $details->quantity }} X {{ $item_price }} = {{ $item_total }} Tk.
+                                            @else
+                                                0 Tk.
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Sub Total : </strong></td>
+                                    <td><strong>{{ $subtotal }} Tk.</strong></td>
+                                </tr>
+                                
+                                @if ($order->coupon_discount != null)
+                                    <tr>
+                                        <td colspan="2" style="text-align: right;">Coupon Discount : </td>
+                                        <td>{{ $order->coupon_discount }} Tk.</td>
+                                    </tr>
+                                @endif
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;">Delivery Charge : </td>
+                                    <td>{{ $order->delivery_charge }} Tk.</td>
+                                </tr>
+                                
+                                @php
+                                    $grandTotal = round($subtotal - ($order->coupon_discount ?? 0) + $order->delivery_charge);
+                                @endphp
+                                
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Grand Total : </strong></td>
+                                    <td><strong>{{ $grandTotal }} Tk.</strong></td>
+                                </tr>
+                                
+                                </table>
                             </div>
                             <!-- /.card-body -->
                         </div>
