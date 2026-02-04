@@ -47,8 +47,24 @@ class AddToCartController extends Controller
         }
 
 
-        if (auth()->check() && auth()->user()->usertype == 'dropshipper' && !$request->filled('drop_selling_price')) {
-            $validator->getMessageBag()->add('drop_selling_price', 'Your selling price is required.');
+        // Dropshipper selling price validation
+        if (auth()->check() && auth()->user()->usertype == 'dropshipper') {
+            if (!$request->filled('drop_selling_price')) {
+                $validator->getMessageBag()->add('drop_selling_price', 'Your selling price is required.');
+            } else {
+                $sellingPrice = floatval($request->drop_selling_price);
+                $minPrice = floatval($product->min_price);
+                $maxPrice = floatval($product->max_price);
+                
+                // Check if selling price is within allowable range
+                if ($sellingPrice < $minPrice) {
+                    $validator->getMessageBag()->add('drop_selling_price', "Selling price cannot be less than ৳{$minPrice}. Please enter a valid price.");
+                }
+                
+                if ($sellingPrice > $maxPrice) {
+                    $validator->getMessageBag()->add('drop_selling_price', "Selling price cannot exceed ৳{$maxPrice}. Order will not be accepted.");
+                }
+            }
         }
 
 

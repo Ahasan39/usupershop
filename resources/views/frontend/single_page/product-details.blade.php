@@ -761,10 +761,9 @@
                                                                         class="form-control @error('selling_price') is-invalid @enderror"
                                                                         placeholder="Enter your selling price"
                                                                         oninput="showProfit()" required>
-                                                                    <small class="text-muted d-block mt-2 fw-bold"
+                                                                    <small class="text-info d-block mt-2 fw-bold"
                                                                         style="font-size: 12px; font-weight: 600;">
-                                                                        Allowed: ৳{{ $productDetails->min_price }} -
-                                                                        ৳{{ $productDetails->max_price }}
+                                                                        Allowed Range: ৳{{ number_format($productDetails->min_price, 2) }} - ৳{{ number_format($productDetails->max_price, 2) }}
                                                                     </small>
                                                                     <input type="hidden" id="product-dropshipper-price"
                                                                         value="{{ $finalPrice }}">

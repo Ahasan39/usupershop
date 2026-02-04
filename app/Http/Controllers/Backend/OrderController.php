@@ -460,33 +460,54 @@ class OrderController extends Controller
 
     private function order_amount_distribution(Order $order)
     {
-        // order এর details আনো
-        $orderDetails = OrderDetail::where('order_id', $order->id)->get();
-
-        foreach ($orderDetails as $detail) {
-            if (!empty($detail->reseller_id)) {
-                // আসল প্রোডাক্টের default sale_price বের করি
-                $product = Product::find($detail->product_id);
-                if (!$product)
-                    continue;
-
-                // ড্রপশিপারের বিক্রির টোটাল
-                $dropshipperTotal = $order->order_total;
-
-                // প্রোডাক্টের default sale price টোটাল
-                $defaultTotal = $product->sale_price * $detail->quantity;
-
-                // লাভ হিসাব
-                $profit = $dropshipperTotal - $defaultTotal;
-
-                if ($profit > 0) {
-                    $dropshipper = User::find($detail->reseller_id);
-                    if ($dropshipper) {
-                        $dropshipper->increment('balance', $profit);
-                    }
-                }
-            }
+        // Only process if order has a dropshipper
+        if (!$order->dropshipper_id) {
+            return;
         }
+
+        // Check if profit has already been added to prevent duplicate credits
+        $existingProfit = \App\Models\DropshipperProfit::where('order_id', $order->id)
+            ->where('status', 'paid')
+            ->first();
+            
+        if ($existingProfit) {
+            \Log::info('Dropshipper profit already paid for order', ['order_id' => $order->id]);
+            return;
+        }
+
+        // Get dropshipper
+        $dropshipper = User::find($order->dropshipper_id);
+        if (!$dropshipper) {
+            \Log::warning('Dropshipper not found for order', ['order_id' => $order->id, 'dropshipper_id' => $order->dropshipper_id]);
+            return;
+        }
+
+        // Get total profit from order
+        $totalProfit = floatval($order->dropshipper_profit);
+
+        if ($totalProfit <= 0) {
+            \Log::info('No profit to distribute for order', ['order_id' => $order->id]);
+            return;
+        }
+
+        // Add profit to dropshipper's balance
+        $dropshipper->increment('balance', $totalProfit);
+
+        // Record the profit transaction
+        \App\Models\DropshipperProfit::create([
+            'dropshipper_id' => $order->dropshipper_id,
+            'order_id' => $order->id,
+            'total_profit' => $totalProfit,
+            'status' => 'paid',
+            'paid_at' => now(),
+        ]);
+
+        \Log::info('Dropshipper profit added successfully', [
+            'order_id' => $order->id,
+            'dropshipper_id' => $order->dropshipper_id,
+            'profit' => $totalProfit,
+            'new_balance' => $dropshipper->balance
+        ]);
     }
 
 

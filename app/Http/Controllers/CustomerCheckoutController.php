@@ -140,6 +140,19 @@ class CustomerCheckoutController extends Controller
 
             if (auth()->check() && $user->usertype == 'dropshipper' && $cart->drop_selling_price > 0) {
 
+                // Validate selling price is within allowable range
+                $minPrice = floatval($product->min_price);
+                $maxPrice = floatval($product->max_price);
+                $sellingPrice = floatval($cart->drop_selling_price);
+                
+                if ($sellingPrice < $minPrice || $sellingPrice > $maxPrice) {
+                    return response()->json([
+                        'status' => false,
+                        'type' => 'price_validation',
+                        'message' => "Product '{$product->name}' selling price must be between ৳{$minPrice} and ৳{$maxPrice}. Please update your cart."
+                    ]);
+                }
+
                 // cost price (default)
                 $cost_price = $variantPrice;
 
