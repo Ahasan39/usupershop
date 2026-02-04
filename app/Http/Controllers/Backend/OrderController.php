@@ -460,11 +460,20 @@ class OrderController extends Controller
 
     private function order_amount_distribution(Order $order)
     {
-        // Only process if order has a dropshipper
-        if (!$order->dropshipper_id) {
-            return;
+        // Process dropshipper profit
+        if ($order->dropshipper_id) {
+            $this->distributeDropshipperProfit($order);
         }
 
+        // Process seller/vendor commission
+        $this->distributeSellerVendorCommission($order);
+    }
+
+    /**
+     * Distribute profit to dropshipper
+     */
+    private function distributeDropshipperProfit(Order $order)
+    {
         // Check if profit has already been added to prevent duplicate credits
         $existingProfit = \App\Models\DropshipperProfit::where('order_id', $order->id)
             ->where('status', 'paid')
@@ -507,6 +516,141 @@ class OrderController extends Controller
             'dropshipper_id' => $order->dropshipper_id,
             'profit' => $totalProfit,
             'new_balance' => $dropshipper->balance
+        ]);
+    }
+
+    /**
+     * Distribute commission to sellers/vendors
+     */
+    private function distributeSellerVendorCommission(Order $order)
+    {
+        // Get order details
+        $orderDetails = OrderDetail::where('order_id', $order->id)->get();
+
+        foreach ($orderDetails as $detail) {
+            // Skip if no vendor/reseller
+            if (empty($detail->vendor_id) && empty($detail->reseller_id)) {
+                continue;
+            }
+
+            $product = Product::find($detail->product_id);
+            if (!$product) {
+                continue;
+            }
+
+            // Process vendor commission (product owner)
+            if (!empty($detail->vendor_id)) {
+                $this->processVendorCommission($order, $detail, $product);
+            }
+
+            // Process reseller/seller commission
+            if (!empty($detail->reseller_id)) {
+                $this->processResellerCommission($order, $detail, $product);
+            }
+        }
+    }
+
+    /**
+     * Process vendor commission
+     */
+    private function processVendorCommission(Order $order, OrderDetail $detail, Product $product)
+    {
+        $vendor = User::find($detail->vendor_id);
+        if (!$vendor) {
+            \Log::warning('Vendor not found', ['vendor_id' => $detail->vendor_id, 'order_id' => $order->id]);
+            return;
+        }
+
+        // Check if already paid
+        $existingLedger = CommissionLedger::where('order_id', $order->id)
+            ->where('reseller_id', $vendor->id)
+            ->where('reference', 'vendor_commission')
+            ->first();
+
+        if ($existingLedger) {
+            \Log::info('Vendor commission already paid', ['vendor_id' => $vendor->id, 'order_id' => $order->id]);
+            return;
+        }
+
+        // Calculate vendor amount (sell price * quantity)
+        $vendorAmount = $detail->sell_price * $detail->quantity;
+
+        // Add to vendor balance
+        $vendor->increment('balance', $vendorAmount);
+
+        // Record in commission ledger
+        CommissionLedger::create([
+            'order_id' => $order->id,
+            'reseller_id' => $vendor->id,
+            'entry_date' => now(),
+            'credit_balance' => $vendorAmount,
+            'debit_balance' => 0,
+            'payment_mood' => 'auto_credit',
+            'reference' => 'vendor_commission',
+        ]);
+
+        \Log::info('Vendor commission added', [
+            'order_id' => $order->id,
+            'vendor_id' => $vendor->id,
+            'amount' => $vendorAmount,
+            'new_balance' => $vendor->balance
+        ]);
+    }
+
+    /**
+     * Process reseller/seller commission
+     */
+    private function processResellerCommission(Order $order, OrderDetail $detail, Product $product)
+    {
+        $reseller = User::find($detail->reseller_id);
+        if (!$reseller) {
+            \Log::warning('Reseller not found', ['reseller_id' => $detail->reseller_id, 'order_id' => $order->id]);
+            return;
+        }
+
+        // Check if already paid
+        $existingLedger = CommissionLedger::where('order_id', $order->id)
+            ->where('reseller_id', $reseller->id)
+            ->where('reference', 'reseller_commission')
+            ->first();
+
+        if ($existingLedger) {
+            \Log::info('Reseller commission already paid', ['reseller_id' => $reseller->id, 'order_id' => $order->id]);
+            return;
+        }
+
+        // Calculate commission based on reseller's commission percentage
+        $commissionPercentage = floatval($reseller->commission ?? 0);
+        
+        if ($commissionPercentage <= 0) {
+            \Log::info('No commission set for reseller', ['reseller_id' => $reseller->id, 'order_id' => $order->id]);
+            return;
+        }
+
+        // Commission = (sell_price * quantity) * (commission% / 100)
+        $orderAmount = $detail->sell_price * $detail->quantity;
+        $commissionAmount = ($orderAmount * $commissionPercentage) / 100;
+
+        // Add to reseller balance
+        $reseller->increment('balance', $commissionAmount);
+
+        // Record in commission ledger
+        CommissionLedger::create([
+            'order_id' => $order->id,
+            'reseller_id' => $reseller->id,
+            'entry_date' => now(),
+            'credit_balance' => $commissionAmount,
+            'debit_balance' => 0,
+            'payment_mood' => 'auto_credit',
+            'reference' => 'reseller_commission',
+        ]);
+
+        \Log::info('Reseller commission added', [
+            'order_id' => $order->id,
+            'reseller_id' => $reseller->id,
+            'commission_percentage' => $commissionPercentage,
+            'amount' => $commissionAmount,
+            'new_balance' => $reseller->balance
         ]);
     }
 
