@@ -157,7 +157,6 @@
                     <img src="{{ public_path('upload/logo_image/' . $logo->image) }}" alt="U Super Shop Logo">
                 </td>
                 <td width="40%" class="company-info text-center">
-                    <h2><strong>U Super Shop</strong></h2>
                     <p>
                         <strong>Whatsapp:</strong> 01894448136<br>
                         <strong>Email:</strong> example@gmail.com<br>

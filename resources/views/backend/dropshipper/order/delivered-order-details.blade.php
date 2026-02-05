@@ -48,6 +48,137 @@
                                 $footercontent = Helper::getfootercontacts();
                             @endphp
                             <div class="card-body">
+                                <style>
+                                    @media (max-width: 768px) {
+                                        .myTable {
+                                            display: block;
+                                            border: none !important;
+                                        }
+                                        .myTable tr {
+                                            display: flex;
+                                            flex-direction: column;
+                                            width: 100%;
+                                            border: 1px solid #dee2e6;
+                                            margin-bottom: 12px;
+                                            border-radius: 8px;
+                                            overflow: hidden;
+                                        }
+                                        .myTable td {
+                                            display: block;
+                                            width: 100% !important;
+                                            padding: 10px !important;
+                                            text-align: center !important;
+                                            border: none !important;
+                                            border-bottom: 1px solid #f0f0f0 !important;
+                                        }
+                                        .myTable td:last-child {
+                                            border-bottom: none !important;
+                                        }
+                                        .myTable img {
+                                            max-width: 130px !important;
+                                            margin: 0 auto;
+                                        }
+
+                                        /* Compact Header Layout */
+                                        .myTable tr:first-child {
+                                            flex-direction: row !important;
+                                            flex-wrap: wrap;
+                                            margin-bottom: 8px;
+                                        }
+                                        .myTable tr:first-child td:nth-child(1) {
+                                            width: 50% !important;
+                                            border-right: 1px solid #f0f0f0 !important;
+                                            padding: 8px !important;
+                                        }
+                                        .myTable tr:first-child td:nth-child(3) {
+                                            width: 50% !important;
+                                            padding: 8px !important;
+                                            display: flex;
+                                            flex-direction: column;
+                                            justify-content: center;
+                                            font-size: 0.85rem;
+                                        }
+                                        .myTable tr:first-child td:nth-child(2) {
+                                            width: 100% !important;
+                                            order: 3;
+                                            padding: 6px !important;
+                                            background: #fcfcfc;
+                                            font-size: 0.85rem;
+                                        }
+                                        
+                                        .myTable tr:nth-child(2) {
+                                            margin-bottom: 8px;
+                                        }
+                                        .myTable tr:nth-child(2) td:first-child {
+                                            background: #f8f9fa;
+                                            font-weight: bold;
+                                            padding: 6px !important;
+                                            font-size: 0.9rem;
+                                        }
+                                        .myTable tr:nth-child(2) td:last-child {
+                                            text-align: left !important;
+                                            padding: 10px !important;
+                                            font-size: 0.9rem;
+                                        }
+                                        .myTable tr:nth-child(2) td:last-child strong {
+                                            display: block;
+                                            margin-top: 6px;
+                                            color: #444;
+                                        }
+                                        .myTable tr:nth-child(2) td:last-child strong:first-child {
+                                            margin-top: 0;
+                                        }
+
+                                        /* Product table specific adjustments */
+                                        .myTable tr:nth-child(n+5) {
+                                            margin-bottom: 15px;
+                                        }
+                                        .myTable tr:nth-child(n+5) td {
+                                            text-align: left !important;
+                                            display: flex;
+                                            flex-direction: column;
+                                            align-items: flex-start;
+                                            gap: 4px;
+                                            padding: 8px 12px !important;
+                                        }
+                                        .myTable tr:nth-child(n+5) td::before {
+                                            content: attr(data-label);
+                                            font-weight: bold;
+                                            color: #1781BF;
+                                            font-size: 0.75rem;
+                                            text-transform: uppercase;
+                                        }
+                                        .myTable tr:nth-child(n+5) td:first-child::before {
+                                            display: none;
+                                        }
+                                        .myTable tr:nth-child(3) {
+                                            background: #f8f9fa;
+                                            font-weight: bold;
+                                            color: #1781BF;
+                                            margin-bottom: 2px;
+                                        }
+                                        .myTable tr:nth-child(3) td {
+                                            padding: 6px !important;
+                                        }
+                                        .myTable tr:nth-child(4) {
+                                            display: none;
+                                        }
+                                        
+                                        /* Fix for subtotal/grand total rows */
+                                        .myTable tr:nth-last-child(-n+4) {
+                                            flex-direction: row;
+                                            justify-content: space-between;
+                                            margin-bottom: 0;
+                                            border-radius: 0;
+                                            border-top: none;
+                                        }
+                                        .myTable tr:nth-last-child(-n+4) td {
+                                            width: auto !important;
+                                            border: none !important;
+                                            padding: 8px !important;
+                                        }
+                                    }
+                                </style>
                                 <table class="text-center myTable" border="1" width="100%">
                                     <tr>
                                         <td width="30%">
@@ -56,7 +187,6 @@
                                                 alt="{{ $logo->name ?? '' }}">
                                         </td>
                                         <td width="40%">
-                                            <h4><strong>U Super Shop</strong></h4>
                                             <span><strong>Mobile No : </strong>{{ $footercontent->mobile ?? ''}}</span><br>
                                             <span><strong>Email : </strong> {{ $footercontent->email ?? '' }}</span><br>
                                             <span>{{ $footercontent->address ?? ''  }}</span>
@@ -98,7 +228,7 @@
                                 
                                 @foreach ($order->order_details as $details)
                                     <tr>
-                                        <td style="text-align: left;">
+                                        <td data-label="Product" style="text-align: left;">
                                             @if ($details->product)
                                                 <img style="width: 50px;height:30px; border: 1px solid #000;background: #fff;padding: 3px;margin: 3px;"
                                                     src="{{ url('upload/product_images/' . $details->product->image) }}" alt="Product Image">
@@ -108,10 +238,10 @@
                                                 No product information available
                                             @endif
                                         </td>
-                                        <td>
+                                        <td data-label="Color & Size">
                                             {{ $details->color_name ?? 'N/A' }} & {{ $details->size_name ?? 'N/A' }}
                                         </td>
-                                        <td>
+                                        <td data-label="Qty & Price">
                                             @if ($details->product)
                                                 @php
                                                     $item_price = $details->sell_price;

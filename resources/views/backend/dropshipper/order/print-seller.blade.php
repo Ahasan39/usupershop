@@ -17,7 +17,6 @@ table, th, td {
                 style="filter: invert(60%) !important;" alt="{{ $logo->name }}">
         </td>
         <td width="40%">
-            <h4><strong>U Super Shop</strong></h4>
             <span><strong>Mobile No : </strong> 01894448136</span><br>
             <span><strong>Email : </strong> examplr@gmail.com</span><br>
             <span>Dhaka, Bangladesh</span>
