@@ -440,6 +440,41 @@ class OrderController extends Controller
 
             foreach ($orders as $order) {
                 $order->status = $delivery_status;
+                
+                // Set status timestamp based on the new status
+                switch ($delivery_status) {
+                    case 'confirmed':
+                        if (!$order->confirmed_at) {
+                            $order->confirmed_at = now();
+                        }
+                        break;
+                    case 'packaging':
+                        if (!$order->packaging_at) {
+                            $order->packaging_at = now();
+                        }
+                        break;
+                    case 'shipment':
+                        if (!$order->shipment_at) {
+                            $order->shipment_at = now();
+                        }
+                        break;
+                    case 'delivered':
+                        if (!$order->delivered_at) {
+                            $order->delivered_at = now();
+                        }
+                        break;
+                    case 'return':
+                        if (!$order->returned_at) {
+                            $order->returned_at = now();
+                        }
+                        break;
+                    case 'canceled':
+                        if (!$order->canceled_at) {
+                            $order->canceled_at = now();
+                        }
+                        break;
+                }
+                
                 $order->save();
 
                 if ($delivery_status === 'delivered') {

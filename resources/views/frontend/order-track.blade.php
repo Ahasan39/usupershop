@@ -276,7 +276,29 @@
                                                 <div class="step-icon-box">
                                                     <i class="fa {{ $step['icon'] }}"></i>
                                                 </div>
-                                                <div class="step-text">{{ $step['label'] }}</div>
+                                                <div class="step-text">
+                                                    {{ $step['label'] }}
+                                                    @php
+                                                        $timestampField = match($index) {
+                                                            0 => 'created_at',
+                                                            1 => 'confirmed_at',
+                                                            2 => 'packaging_at',
+                                                            3 => 'shipment_at',
+                                                            4 => 'delivered_at',
+                                                            5 => 'returned_at',
+                                                            default => null
+                                                        };
+                                                    @endphp
+                                                    @if($timestampField && $order->$timestampField)
+                                                        <div style="font-size: 11px; color: #888; margin-top: 5px; font-weight: 400;">
+                                                            {{ \Carbon\Carbon::parse($order->$timestampField)->format('d M Y, h:i A') }}
+                                                        </div>
+                                                    @elseif($index > $currentStep)
+                                                        <div style="font-size: 11px; color: #ccc; margin-top: 5px; font-weight: 400;">
+                                                            Not yet
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
