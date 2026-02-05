@@ -58,12 +58,6 @@
         .bottom-nav .nav-link.active i {
             transform: scale(1.15);
         }
-
-        @media (max-width: 768px) {
-            .content-wrapper {
-                padding-bottom: 70px;
-            }
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -197,7 +191,7 @@
             display: block;
         }
     </style>
-    @yield('custom_css')
+        @yield('custom_css')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -219,16 +213,8 @@
                             class="fas fa-bars"></i></a>
                 </li>
 
-                @if (auth()->user()->usertype === 'dropshipper')
-                    <li class="nav-item">
-                        <a class="btn btn-success btn-sm mt-1" href="<?php echo url('shops/' . auth()->user()->id . '?refer=' . auth()->user()->code); ?>" target="_blank">Go Shop</a>
-                    </li>
-                    <li class="nav-item pl-2">
-                        <button class="copy-btn btn btn-warning text-white btn-sm mt-1" onclick="copyReferLink()">Referal Link</button>
-                    </li>
 
-                    <textarea type="text" id="password" class="form-control d-none" rows="2" cols="4">{{ route('seller.signup') }}?refer={{ auth()->user()->refer_code }}</textarea>
-                @endif
+
             </ul>
             <!-- Left navbar links -->
             <!-- Right navbar links -->
@@ -312,7 +298,7 @@
             </script>
         @endif
         <!-- Mobile-only Bottom Tab Menu - Horizontal Side-by-Side with 5 Tabs -->
-        <nav class="navbar fixed-bottom navbar-light bg-white border-top shadow-sm d-block d-md-none bottom-nav"
+        <nav class="navbar fixed-bottom navbar-light bg-white border-top shadow-sm"
             style="height: 64px; z-index: 1030;"> <!-- slightly taller for better touch target -->
             <div class="container-fluid px-0">
                 <ul class="nav nav-pills w-100 d-flex justify-content-around align-items-center" role="tablist">
@@ -363,7 +349,7 @@
                 </ul>
             </div>
         </nav>
-        <footer class="main-footer d-none d-md-block">
+        <footer class="main-footer">
             <strong>Copyright &copy;
                 <a href="{{ route('frontend.home') }}">U Super Shop</a>.</strong>
             <div class="float-right d-none d-sm-inline-block">
