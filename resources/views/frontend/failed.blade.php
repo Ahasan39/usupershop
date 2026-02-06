@@ -54,15 +54,48 @@
                 $("#countdown").text(count);
                 if (count <= 0) {
                     clearInterval(countdown);
-                    @if ($returnData['payment_type'] != NULL)
+                    @if (isset($returnData['payment_type']) && $returnData['payment_type'] != NULL)
                       @if ($returnData['payment_type'] === 'customer_order')
-                        window.location.href = "{{ route('dashboard') }}";
-                      @endif
-                      @if ($returnData['payment_type'] === 'user_subscription')
-                        window.location.href = "{{ route('seller.dashboard') }}";
+                        @auth
+                          @if (auth()->user()->usertype === 'customer')
+                            window.location.href = "{{ route('dashboard') }}";
+                          @elseif (auth()->user()->usertype === 'seller' || auth()->user()->usertype === 'vendor')
+                            window.location.href = "{{ route('seller.dashboard') }}";
+                          @elseif (auth()->user()->usertype === 'dropshipper')
+                            window.location.href = "{{ route('dropshipper.dashboard') }}";
+                          @else
+                            window.location.href = "{{ route('frontend.home') }}";
+                          @endif
+                        @else
+                          window.location.href = "{{ route('frontend.home') }}";
+                        @endauth
+                      @elseif ($returnData['payment_type'] === 'user_subscription')
+                        @auth
+                          @if (auth()->user()->usertype === 'seller' || auth()->user()->usertype === 'vendor')
+                            window.location.href = "{{ route('seller.dashboard') }}";
+                          @elseif (auth()->user()->usertype === 'dropshipper')
+                            window.location.href = "{{ route('dropshipper.dashboard') }}";
+                          @else
+                            window.location.href = "{{ route('frontend.home') }}";
+                          @endif
+                        @else
+                          window.location.href = "{{ route('frontend.home') }}";
+                        @endauth
                       @endif
                     @else
-                      window.location.href = "{{ route('dashboard') }}";
+                      @auth
+                        @if (auth()->user()->usertype === 'customer')
+                          window.location.href = "{{ route('dashboard') }}";
+                        @elseif (auth()->user()->usertype === 'seller' || auth()->user()->usertype === 'vendor')
+                          window.location.href = "{{ route('seller.dashboard') }}";
+                        @elseif (auth()->user()->usertype === 'dropshipper')
+                          window.location.href = "{{ route('dropshipper.dashboard') }}";
+                        @else
+                          window.location.href = "{{ route('frontend.home') }}";
+                        @endif
+                      @else
+                        window.location.href = "{{ route('frontend.home') }}";
+                      @endauth
                     @endif
                 }
             }, 1000);
