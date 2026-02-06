@@ -63,6 +63,12 @@ class BkashPaymentGatewayController extends Controller
             if ($paymentType === 'customer_order') {
 
                 if ($this->customer_payment_confirmation('success', $paymentData)) {
+                    // Get user for redirect
+                    $order_id = explode('-', $paymentData['merchantInvoiceNumber'])[0];
+                    $order = Order::find($order_id);
+                    if ($order) {
+                        $returnData['user'] = User::find($order->user_id);
+                    }
                     return view('frontend.sucess', compact('returnData'));
                 }
 
@@ -72,6 +78,12 @@ class BkashPaymentGatewayController extends Controller
             if ($paymentType === 'user_subscription') {
 
                 if ($this->user_subscription_payment_confirmation('success', $paymentData)) {
+                    // Get user for redirect
+                    $subscription_id = explode('-', $paymentData['merchantInvoiceNumber'])[0];
+                    $subscription = SubscriptionFee::find($subscription_id);
+                    if ($subscription) {
+                        $returnData['user'] = User::find($subscription->seller_id);
+                    }
                     return view('frontend.sucess', compact('returnData'));
                 }
 
@@ -95,13 +107,30 @@ class BkashPaymentGatewayController extends Controller
             'amount' => 0,
         ];
 
+        // Get user information for redirect
+        $user = null;
         if ($paymentType === 'customer_order') {
+            $order_id = explode('-', $paymentData['merchantInvoiceNumber'])[0];
+            $order = Order::find($order_id);
+            if ($order) {
+                $user = User::find($order->user_id);
+                auth()->loginUsingId($order->user_id);
+            }
 
             $this->customer_payment_confirmation(
                 $status === 'failure' ? 'fail' : 'cancel',
                 $paymentData
             );
+        } elseif ($paymentType === 'user_subscription') {
+            $subscription_id = explode('-', $paymentData['merchantInvoiceNumber'])[0];
+            $subscription = SubscriptionFee::find($subscription_id);
+            if ($subscription) {
+                $user = User::find($subscription->seller_id);
+                auth()->loginUsingId($subscription->seller_id);
+            }
         }
+
+        $returnData['user'] = $user;
 
         return $status === 'failure'
             ? view('frontend.failed', compact('returnData'))
